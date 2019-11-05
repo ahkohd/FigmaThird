@@ -161,7 +161,7 @@ export default function Viewport(props) {
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
     mesh.name = "ground";
-    addObjectToScene(mesh);
+    scene.add(mesh);
   };
 
   const addGrid = () => {
@@ -274,7 +274,7 @@ export default function Viewport(props) {
   const handleModelImport = () => {
     if (!state.importData) return;
     transformControl.detach();
-    clearMeshesFromScene();
+    // clearMeshesFromScene();
     dispatch({ type: "LOADING_MODEL", payload: "Loading 3D Scene" });
     const type = state.importType;
     const data = state.importData;
