@@ -147,7 +147,7 @@ export default function Viewport(props) {
     let mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, 10, 0);
     mesh.castShadow = true;
-    mesh.name = "preview_model";
+    mesh.name = "Cube";
     transformControl.attach(mesh);
     addObjectToScene(mesh);
   };
@@ -259,22 +259,22 @@ export default function Viewport(props) {
 
   const clearMeshesFromScene = () => {
     try {
-      scene.remove(scene.getObjectByName("preview_model"));
-      let i = 0;
-      for (const obj of objectsForSelection) {
-        if (obj.name == "preview_model") {
-          objectsForSelection.splice(i, 1);
-          break;
-        } else {
-          i += 1;
-        }
-      }
-    } catch (e) {}
+      console.log(scene);
+      // empty objects for selection ....
+      objectsForSelection = [];
+      scene.children.forEach(element => {
+        if (element instanceof THREE.Group) scene.remove(element);
+        if (element instanceof THREE.Mesh) scene.remove(element);
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleModelImport = () => {
     if (!state.importData) return;
     transformControl.detach();
+    clearMeshesFromScene();
     dispatch({ type: "LOADING_MODEL", payload: "Loading 3D Scene" });
     const type = state.importType;
     const data = state.importData;
@@ -311,9 +311,7 @@ export default function Viewport(props) {
       glb => {
         const { camera, scene, orbitControl } = getThreeObjects();
         dispatch({ type: "DONE_LOADING_MODEL" });
-        clearMeshesFromScene();
         fitCameraToSelection(camera, orbitControl, [glb.scene]);
-        glb.scene.name = "preview_model";
         addObjectToScene(glb.scene, true);
         transformControl.attach(glb.scene);
       },
@@ -332,9 +330,7 @@ export default function Viewport(props) {
       model => {
         const { camera, scene, orbitControl } = getThreeObjects();
         dispatch({ type: "DONE_LOADING_MODEL" });
-        clearMeshesFromScene();
         fitCameraToSelection(camera, orbitControl, [model]);
-        model.name = "preview_model";
         addObjectToScene(model, true);
         transformControl.attach(model);
       },
@@ -352,9 +348,7 @@ export default function Viewport(props) {
       fbx => {
         const { camera, scene, orbitControl } = getThreeObjects();
         dispatch({ type: "DONE_LOADING_MODEL" });
-        clearMeshesFromScene();
         fitCameraToSelection(camera, orbitControl, [fbx]);
-        fbx.name = "preview_model";
         addObjectToScene(fbx, true);
         transformControl.attach(fbx);
       },
@@ -377,7 +371,7 @@ export default function Viewport(props) {
     try {
       scene.getObjectByName("ground").visible = true;
       scene.getObjectByName("grid").visible = true;
-      transformControl.attach(scene.getObjectByName("preview_model"));
+      transformControl.attach(scene.getObjectByName("#preview_model#"));
     } catch (e) {}
   };
 
@@ -480,18 +474,20 @@ export default function Viewport(props) {
 
   const addObjectToScene = (object, strip = false) => {
     if (!strip) {
+      object.name += " #preview_model#";
       objectsForSelection.push(object);
     } else {
       if (object instanceof THREE.Group) {
         console.log(1, "A GROUP");
         object.traverse(obj => {
           if (obj instanceof THREE.Mesh) {
-            console.log(obj.name);
+            obj.name += " #preview_model#";
             objectsForSelection.push(obj);
           }
         });
       }
     }
+    console.log("OBJS", objectsForSelection);
     scene.add(object);
   };
 
