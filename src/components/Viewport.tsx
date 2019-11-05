@@ -24,6 +24,7 @@ let mouse = new THREE.Vector2();
 let onDownPosition = new THREE.Vector2();
 let onUpPosition = new THREE.Vector2();
 let onDoubleClickPosition = new THREE.Vector2();
+let objectsForSelection: any[] = [];
 
 export default function Viewport(props) {
   const { state, dispatch }: any = React.useContext(AppContext);
@@ -148,7 +149,7 @@ export default function Viewport(props) {
     mesh.castShadow = true;
     mesh.name = "preview_model";
     transformControl.attach(mesh);
-    scene.add(mesh);
+    addObjectToScene(mesh);
   };
 
   const addGround = () => {
@@ -160,7 +161,7 @@ export default function Viewport(props) {
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
     mesh.name = "ground";
-    scene.add(mesh);
+    addObjectToScene(mesh);
   };
 
   const addGrid = () => {
@@ -259,9 +260,15 @@ export default function Viewport(props) {
   const clearMeshesFromScene = () => {
     try {
       scene.remove(scene.getObjectByName("preview_model"));
-      // for (let i = scene.children.length - 1; i >= 0; i--) {
-      //   if (scene.children[i].type === "Mesh") scene.remove(scene.children[i]);
-      // }
+      let i = 0;
+      for (const obj of objectsForSelection) {
+        if (obj.name == "preview_model") {
+          objectsForSelection.splice(i, 1);
+          break;
+        } else {
+          i += 1;
+        }
+      }
     } catch (e) {}
   };
 
@@ -307,7 +314,7 @@ export default function Viewport(props) {
         clearMeshesFromScene();
         fitCameraToSelection(camera, orbitControl, [glb.scene]);
         glb.scene.name = "preview_model";
-        scene.add(glb.scene);
+        addObjectToScene(glb.scene, true);
         transformControl.attach(glb.scene);
       },
       (err, type) => {
@@ -328,7 +335,7 @@ export default function Viewport(props) {
         clearMeshesFromScene();
         fitCameraToSelection(camera, orbitControl, [model]);
         model.name = "preview_model";
-        scene.add(model);
+        addObjectToScene(model, true);
         transformControl.attach(model);
       },
       (err, type) => {
@@ -348,7 +355,7 @@ export default function Viewport(props) {
         clearMeshesFromScene();
         fitCameraToSelection(camera, orbitControl, [fbx]);
         fbx.name = "preview_model";
-        scene.add(fbx);
+        addObjectToScene(fbx, true);
         transformControl.attach(fbx);
       },
       (err, type) => {
@@ -419,7 +426,7 @@ export default function Viewport(props) {
 
   const handleClick = () => {
     if (onDownPosition.distanceTo(onUpPosition) === 0) {
-      const intersects = getIntersects(onUpPosition, scene.children);
+      const intersects = getIntersects(onUpPosition, getAllObjects());
       console.log(4, "INTERSET", intersects);
 
       if (intersects.length > 0) {
@@ -443,7 +450,7 @@ export default function Viewport(props) {
     const array = getMousePosition(port, event.clientX, event.clientY);
     onDoubleClickPosition.fromArray(array);
 
-    const intersects = getIntersects(onDoubleClickPosition, scene.children);
+    const intersects = getIntersects(onDoubleClickPosition, getAllObjects());
 
     if (intersects.length > 0) {
       const intersect = intersects[0];
@@ -456,7 +463,10 @@ export default function Viewport(props) {
     if (object.name == "grid") return;
     transformControl.detach();
     transformControl.attach(object);
-    transformControl.update();
+  };
+
+  const getAllObjects = () => {
+    return objectsForSelection;
   };
 
   const setObjectAsPivotPoint = object => {
@@ -466,6 +476,23 @@ export default function Viewport(props) {
       object.position.z
     );
     orbitControl.update();
+  };
+
+  const addObjectToScene = (object, strip = false) => {
+    if (!strip) {
+      objectsForSelection.push(object);
+    } else {
+      if (object instanceof THREE.Group) {
+        console.log(1, "A GROUP");
+        object.traverse(obj => {
+          if (obj instanceof THREE.Mesh) {
+            console.log(obj.name);
+            objectsForSelection.push(obj);
+          }
+        });
+      }
+    }
+    scene.add(object);
   };
 
   return (
