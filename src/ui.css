@@ -1,0 +1,129 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  overflow: hidden;
+}
+
+canvas {
+  outline: none;
+}
+
+.app {
+  display: flex;
+}
+
+.panel {
+  width: 100%;
+}
+
+.shelf {
+  overflow-y: scroll;
+  border-left: 1px solid #ddd;
+}
+
+.panel__button {
+  position: relative;
+  margin-top: 10px !important;
+}
+
+/* .panel__button--load {
+} */
+
+.panel__button--render {
+  height: 30px;
+}
+
+.panel__fileInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  z-index: 100;
+}
+
+.loader__container {
+  margin: auto;
+}
+
+.loader__backdrop {
+  height: 100%;
+  background: linear-gradient(to bottom, black, rgba(255, 0, 0, 0));
+  position: absolute;
+  display: flex;
+}
+.loader__text {
+  color: white;
+  text-align: center;
+  font: caption;
+  font-size: 12px;
+  margin: 0;
+}
+
+.viewport {
+  outline: none;
+}
+
+.divider {
+  border-bottom: 1px solid #eee;
+  padding: 20px !important;
+}
+
+/* utils */
+.pad {
+  padding: 5px 20px;
+}
+
+input[type="file"] {
+  /* opacity: 0; */
+  position: relative;
+}
+
+.fileinput {
+  position: relative;
+}
+
+.fileinput input[type="file"] {
+  opacity: 0;
+}
+
+.fileinput__placeholder {
+  position: absolute;
+  bottom: -8px;
+  left: 30px;
+  width: 80%;
+  height: 100%;
+  color: black;
+  font: caption;
+  font-size: 12px;
+  pointer-events: none;
+  position: default;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.divider--foot {
+  margin: 5px 0;
+  padding: 0 !important;
+}
+
+.footstat {
+  height: 32px;
+  border-top: 1px solid #ddd;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.445);
+  width: 550px;
+}
+
+.footstat__block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 16px;
+}
