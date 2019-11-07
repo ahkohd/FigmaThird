@@ -33,6 +33,16 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         env: payload,
       };
+    case "SET_ACTIVE_TAB":
+      return {
+        ...state,
+        activeTab: payload,
+      };
+    case "SET_SCENE_TREE":
+      return {
+        ...state,
+        sceneTree: payload,
+      };
     default:
       return state;
   }

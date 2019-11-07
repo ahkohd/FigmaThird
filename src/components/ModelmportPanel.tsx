@@ -221,14 +221,8 @@ export default function ModelImportPanel(props) {
 
   return (
     <div className="panel">
-      {/* section1 */}
-      <div className="ui-section">
-        <SectionTitle className="divider">Environment</SectionTitle>
-      </div>
-
       {/* section2 */}
       <div className="ui-section">
-        <SectionTitle className="divider">Import</SectionTitle>
         <div className="pad">
           <SectionTitle>Model Type</SectionTitle>
           <div className="layer-options">

@@ -6,7 +6,13 @@ const AppContext = createContext({
     loadingText: "",
     importType: "obj",
     importData: null,
-    handleSnap: null
+    handleSnap: null,
+    activeTab: 'import',
+    sceneTree: {
+        name: "root",
+        toggled: true,
+        children: []
+      }
 });
 
 export default AppContext;

@@ -3,6 +3,7 @@ import AppContext from "../context";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls";
+import Tree from "./Tree";
 
 import Loader from "./Loader";
 import { encode } from "../utils";
@@ -53,6 +54,11 @@ export default function Viewport(props) {
     // When Import model data state changed
     handleModelImport();
   }, [state.importData]);
+
+  React.useEffect(() => {
+    // React when use opens the inspector view ...
+    if (state.activeTab == "inspector") handleInspector();
+  }, [state.activeTab]);
 
   const init = () => {
     // Container
@@ -489,6 +495,31 @@ export default function Viewport(props) {
     }
     console.log("OBJS", objectsForSelection);
     scene.add(object);
+  };
+
+  const handleInspector = () => {
+    const sceneTree = traverseAndGetData(new Tree(null), scene);
+    console.log("SCENE TREE", sceneTree);
+    dispatch({ type: "SET_SCENE_TREE", payload: sceneTree });
+  };
+
+  const traverseAndGetData = (parent, node) => {
+    for (const childNode of node.children) {
+      const childTree = new Tree(parent);
+      // set tree data
+      childTree.name = childNode.name;
+      childTree.id = childNode.id;
+      childTree.type = childNode.constructor.name;
+      childTree.visible = childNode.visible;
+      childTree.castShadow = childNode.castShadow;
+      childTree.receiveShadow = childNode.receiveShadow;
+      childTree.selected = false;
+
+      parent.add(childTree);
+      traverseAndGetData(childTree, childNode);
+    }
+
+    return parent;
   };
 
   return (

@@ -127,3 +127,27 @@ input[type="file"] {
   justify-content: space-between;
   width: 16px;
 }
+
+.tab {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 5px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.tab__item {
+  margin-right: 15px !important;
+  cursor: pointer !important;
+  user-select: none;
+  max-width: 45px !important;
+}
+
+.tab__item:hover {
+  color: #333 !important;
+}
+
+.tab__item--active {
+  color: #333 !important;
+  font-weight: 600 !important;
+}
