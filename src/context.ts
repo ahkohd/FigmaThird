@@ -12,7 +12,8 @@ const AppContext = createContext({
         name: "root",
         toggled: true,
         children: []
-      }
+    },
+    selectItemInTree: null
 });
 
 export default AppContext;

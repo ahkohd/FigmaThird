@@ -43,6 +43,11 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         sceneTree: payload,
       };
+    case "SET_SELECT_OBJECT":
+      return {
+        ...state,
+        selectItemInTree: payload,
+      };
     default:
       return state;
   }

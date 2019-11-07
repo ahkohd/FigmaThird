@@ -60,6 +60,11 @@ export default function Viewport(props) {
     if (state.activeTab == "inspector") handleInspector();
   }, [state.activeTab]);
 
+  // Watch for inspector selects an item
+  React.useEffect(() => {
+    handleUserSelectOnInspector(state.selectItemInTree);
+  }, [state.selectItemInTree]);
+
   const init = () => {
     // Container
     port = viewportRef.current;
@@ -497,6 +502,7 @@ export default function Viewport(props) {
     scene.add(object);
   };
 
+  // Inspector selection handler ...
   const handleInspector = () => {
     const sceneTree = traverseAndGetData(new Tree(null), scene);
     console.log("SCENE TREE", sceneTree);
@@ -505,22 +511,34 @@ export default function Viewport(props) {
 
   const traverseAndGetData = (parent, node) => {
     for (const childNode of node.children) {
-      const childTree = new Tree(parent);
-      // set tree data
-      childTree.name = childNode.name;
-      childTree.id = childNode.id;
-      childTree.type = childNode.constructor.name;
-      childTree.visible = childNode.visible;
-      childTree.castShadow = childNode.castShadow;
-      childTree.receiveShadow = childNode.receiveShadow;
-      childTree.selected = false;
+      if (!(treeBlackList as any).includes(childNode.constructor.name)) {
+        const childTree = new Tree(parent);
+        // set tree data
+        childTree.id = childNode.id;
+        childTree.type = childNode.constructor.name;
+        childTree.name =
+          childNode.name.trim() == ""
+            ? childTree.type
+            : childNode.name.replace(" #preview_model#", "");
+        childTree.visible = childNode.visible;
+        childTree.castShadow = childNode.castShadow;
+        childTree.receiveShadow = childNode.receiveShadow;
 
-      parent.add(childTree);
-      traverseAndGetData(childTree, childNode);
+        parent.add(childTree);
+        traverseAndGetData(childTree, childNode);
+      }
     }
 
     return parent;
   };
+
+  const handleUserSelectOnInspector = (selectedTreeNode: Tree) => {
+    if (!selectedTreeNode) return;
+    console.log("[INSPECTOR]: USER SELECTS", selectedTreeNode);
+    attachObjectToTransformControl(scene.getObjectById(selectedTreeNode.id));
+  };
+
+  const treeBlackList: string[] = ["TransformControls", "GridHelper"];
 
   return (
     <div>

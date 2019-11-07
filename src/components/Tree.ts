@@ -2,7 +2,7 @@ export default class Tree {
 
     public children: Array<Tree> = new Array<Tree>();
     public data: any;
-    public toggled: boolean = true
+    public toggled: boolean = false
     public name: string;
     public id: number;
     public type: string;

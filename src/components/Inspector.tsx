@@ -1,6 +1,10 @@
 import * as React from "react";
-import { Treebeard } from "react-treebeard";
+import { Treebeard, decorators } from "react-treebeard";
 import AppContext from "../context";
+import style from "./TreeBread/ThreeBreadStyle";
+import Header from "./TreeBread/TreeBreadCustomHeader";
+import Container from "./TreeBread/TreeBreadCustomContainer";
+import Toggle from "./TreeBread/TreeBreadCustomToggle";
 
 export default function Inspector() {
   const { state, dispatch }: any = React.useContext(AppContext);
@@ -26,7 +30,12 @@ export default function Inspector() {
 
   return (
     <div className="panel">
-      <Treebeard data={data} onToggle={onToggle} />
+      <Treebeard
+        data={data.children}
+        decorators={{ ...decorators, Header, Container, Toggle }}
+        style={style}
+        onToggle={onToggle}
+      />
     </div>
   );
 }
