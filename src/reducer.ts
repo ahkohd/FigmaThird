@@ -48,6 +48,21 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         selectItemInTree: payload,
       };
+    case "SET_SELECTED_ITEM_ID":
+      return {
+        ...state,
+        viewportSelectedItemID: payload,
+      };
+    case "SET_ITEM_FOR_HIDE":
+      return {
+        ...state,
+        hideItemValue: payload,
+      };
+    case "SET_ITEM_FOR_DELETE":
+      return {
+        ...state,
+        hideItemDelete: payload,
+      };
     default:
       return state;
   }

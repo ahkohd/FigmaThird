@@ -18,6 +18,7 @@ let scene;
 let camera;
 let orbitControl;
 let transformControl;
+let renderer;
 
 // Object selection vars
 let raycaster = new THREE.Raycaster();
@@ -32,7 +33,7 @@ export default function Viewport(props) {
 
   const viewportRef = React.useRef();
   let port: HTMLDivElement;
-  let renderer;
+  let selectedID: number;
 
   React.useEffect(() => {
     init();
@@ -64,6 +65,18 @@ export default function Viewport(props) {
   React.useEffect(() => {
     handleUserSelectOnInspector(state.selectItemInTree);
   }, [state.selectItemInTree]);
+
+  // Watch for 3d obj to hide
+  React.useEffect(() => {
+    if (!state.hideItemValue) return;
+    handleItemHideToggle(parseInt(state.hideItemValue.split("-")[0]));
+  }, [state.hideItemValue]);
+
+  // Watch for 3d obj to delete.
+  React.useEffect(() => {
+    if (!state.hideItemDelete) return;
+    removeItemFromScene(state.hideItemDelete);
+  }, [state.hideItemDelete]);
 
   const init = () => {
     // Container
@@ -116,8 +129,10 @@ export default function Viewport(props) {
     // scene.background = new THREE.Color(0xa0a0a0);
     // scene.fog = new THREE.Fog(0xffffff, 5000, 10000);
     let light = new THREE.HemisphereLight(0xffffff, 0x444444);
+    let lightHelper = new THREE.HemisphereLightHelper(light, 5);
     light.position.set(0, 20, 0);
     scene.add(light);
+    scene.add(lightHelper);
 
     let light1 = new THREE.DirectionalLight(0xffffff, 1.5);
     light1.position.set(0, 20, 0);
@@ -126,7 +141,9 @@ export default function Viewport(props) {
     light1.shadow.camera.bottom = -10;
     light1.shadow.camera.left = -12;
     light1.shadow.camera.right = 12;
+    const light1Helper = new THREE.DirectionalLightHelper(light1, 5);
     scene.add(light1);
+    scene.add(light1Helper);
 
     addGround();
     addGrid();
@@ -172,6 +189,7 @@ export default function Viewport(props) {
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
     mesh.name = "ground";
+    objectsForSelection.push(mesh);
     scene.add(mesh);
   };
 
@@ -280,6 +298,23 @@ export default function Viewport(props) {
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const removeItemFromScene = id => {
+    // remove from selectable objects ...
+    try {
+      if (transformControl.object.id == id) transformControl.detach();
+      let index = 0;
+      for (const item of objectsForSelection) {
+        if (item.id == id) objectsForSelection.splice(index, 1);
+        index += 1;
+      }
+      scene.remove(scene.getObjectById(id));
+    } catch (e) {
+      console.log(e);
+    }
+    updateScene();
+    handleInspector();
   };
 
   const handleModelImport = () => {
@@ -468,6 +503,7 @@ export default function Viewport(props) {
     if (object.name == "grid") return;
     transformControl.detach();
     transformControl.attach(object);
+    selectedID = object.id;
   };
 
   const getAllObjects = () => {
@@ -523,7 +559,7 @@ export default function Viewport(props) {
         childTree.visible = childNode.visible;
         childTree.castShadow = childNode.castShadow;
         childTree.receiveShadow = childNode.receiveShadow;
-
+        if (selectedID && selectedID == childNode.id) childTree.active = true;
         parent.add(childTree);
         traverseAndGetData(childTree, childNode);
       }
@@ -538,7 +574,18 @@ export default function Viewport(props) {
     attachObjectToTransformControl(scene.getObjectById(selectedTreeNode.id));
   };
 
-  const treeBlackList: string[] = ["TransformControls", "GridHelper"];
+  const handleItemHideToggle = id => {
+    const item = scene.getObjectById(id);
+    item.visible = !item.visible;
+    updateScene();
+  };
+
+  const treeBlackList: string[] = [
+    "TransformControls",
+    "GridHelper",
+    "DirectionalLightHelper",
+    "HemisphereLightHelper"
+  ];
 
   return (
     <div>

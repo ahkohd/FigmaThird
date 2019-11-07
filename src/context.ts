@@ -13,7 +13,11 @@ const AppContext = createContext({
         toggled: true,
         children: []
     },
-    selectItemInTree: null
+    selectItemInTree: null,
+    viewportSelectedItemID: null,
+    hideItemDelete: null,
+    hideItemValue: null
+
 });
 
 export default AppContext;

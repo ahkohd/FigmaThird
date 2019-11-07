@@ -13,6 +13,7 @@ export default function Inspector() {
   const [cursor, setCursor]: any = React.useState(false);
 
   React.useEffect(() => {
+    if (!state.sceneTree) return;
     setData(state.sceneTree);
   }, [state.sceneTree]);
 

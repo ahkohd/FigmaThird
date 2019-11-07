@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "@emotion/styled";
+import AppContext from "../../context";
 
 const Polygon = styled("polygon", {
   shouldForwardProp: prop =>
@@ -11,12 +12,14 @@ export const Div = styled("div", {
 })(({ style }: any) => style);
 
 const Toggle = ({ style, onClick, node }) => {
+  const { state, dispatch }: any = React.useContext(AppContext);
+
   const { height, width } = style;
   const midHeight = height * 0.5;
   const points = `0,0 0,${height} ${width},${midHeight}`;
-  // onClick={onClick}
+
   return (
-    <div style={style.base}>
+    <div style={style.base} onClick={onClick}>
       <Div style={style.wrapper}>
         {node.children && node.children.length > 0 && (
           <svg {...{ height, width }}>
