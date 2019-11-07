@@ -16,7 +16,8 @@ const AppContext = createContext({
     selectItemInTree: null,
     viewportSelectedItemID: null,
     hideItemDelete: null,
-    hideItemValue: null
+    hideItemValue: null,
+    transformControlPivot: null
 
 });
 

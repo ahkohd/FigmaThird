@@ -130,6 +130,10 @@ input[type="file"] {
   width: 16px;
 }
 
+.footstat__btn {
+  transform: scale(0.7);
+}
+
 .tab {
   display: flex;
   align-items: center;

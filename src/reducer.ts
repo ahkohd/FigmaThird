@@ -63,6 +63,16 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         hideItemDelete: payload,
       };
+    case "SET_TRANSFORM_MODE":
+      return {
+        ...state,
+        transformControlMode: payload,
+      };
+    case "SET_TRANSFORM_OBJECT_AS_PIVOT":
+      return {
+        ...state,
+        transformControlPivot: payload,
+      };
     default:
       return state;
   }

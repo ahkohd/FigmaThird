@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Icon } from "figma-styled-components";
+import { Icon, IconButton } from "figma-styled-components";
 import AppContext from "../../context";
 
 export default function Header({ onClick, style, customStyles, node }) {
@@ -68,8 +68,15 @@ export default function Header({ onClick, style, customStyles, node }) {
             {node.visible ? <Icon name="Visible" /> : <Icon name="Hidden" />}
           </div>
           <div style={{ transform: "scale(.8)", color: "#555" }}>
-            <Icon
-              name="Trash"
+            <IconButton
+              icon={<Icon name="Trash" />}
+              disabled={([
+                "HemisphereLight",
+                "PointLight",
+                "DirectionalLight",
+                "RectAreaLight",
+                "SpotLight"
+              ] as any).includes(node.type)}
               onClick={() => {
                 dispatch({
                   type: "SET_ITEM_FOR_DELETE",

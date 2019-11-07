@@ -78,6 +78,18 @@ export default function Viewport(props) {
     removeItemFromScene(state.hideItemDelete);
   }, [state.hideItemDelete]);
 
+  // Watch for when user triggers mode change ..
+  React.useEffect(() => {
+    if (!state.transformControlMode) return;
+    handleTransformControlMode(state.transformControlMode.split("-")[0]);
+  }, [state.transformControlMode]);
+
+  // Watch for when user requests to set current transform object as pivot
+  React.useEffect(() => {
+    if (!state.transformControlPivot) return;
+    handleTransformControlPivot();
+  }, [state.transformControlPivot]);
+
   const init = () => {
     // Container
     port = viewportRef.current;
@@ -578,6 +590,14 @@ export default function Viewport(props) {
     const item = scene.getObjectById(id);
     item.visible = !item.visible;
     updateScene();
+  };
+
+  const handleTransformControlMode = (mode: string) => {
+    transformControl.setMode(mode);
+  };
+
+  const handleTransformControlPivot = () => {
+    setObjectAsPivotPoint(transformControl.object);
   };
 
   const treeBlackList: string[] = [
