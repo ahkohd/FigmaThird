@@ -73,7 +73,29 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         transformControlPivot: payload,
       };
-    default:
-      return state;
+    case "ADD_LIGHT_TO_SCENE":
+      const l = state.lightsInScene;
+      l.push(payload)
+      return {
+        ...state,
+        lightsInScene: l,
+      };
+    case "REMOVE_LIGHT_FROM_SCENE":
+      const lights = state.lightsInScene;
+      lights.splice(payload, 1);
+      return {
+        ...state,
+        lightsInScene: lights,
+      };
+    case "UPDATE_LIGHT_OF_SCENE":
+      return {
+        ...state,
+        updateLightColorData: { index: payload.index, value: payload.value, colorIndex: payload.colorIndex, type: payload.type },
+      };
+    case "REQUEST_ADD_LIGHT_TO_SCENE":
+      return {
+        ...state,
+        requestAddLight: payload,
+      };
   }
 }

@@ -10,21 +10,30 @@ import Shelf from "./components/Shelf";
 declare function require(path: string): any;
 
 (window as any).third_alert = message => {
-  parent.postMessage({ pluginMessage: { type: "alert", message } }, "*");
+    parent.postMessage(
+        { pluginMessage: { type: "alert", message } },
+        "*"
+    );
 };
 
 const App = () => {
-  const initialState = React.useContext(AppContext);
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+    const initialState = React.useContext(AppContext);
+    const [state, dispatch] = React.useReducer(
+        reducer,
+        initialState
+    );
 
-  return (
-    <AppContext.Provider value={{ state, dispatch } as any}>
-      <div className="app">
-        <Viewport height={450} width={550}></Viewport>
-        <Shelf width={250}></Shelf>
-      </div>
-    </AppContext.Provider>
-  );
+    return (
+        <AppContext.Provider
+            value={{ state, dispatch } as any}>
+            <div className="app">
+                <Viewport
+                    height={450}
+                    width={550}></Viewport>
+                <Shelf width={250}></Shelf>
+            </div>
+        </AppContext.Provider>
+    );
 };
 
 ReactDOM.render(<App />, document.getElementById("root"));
