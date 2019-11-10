@@ -19,7 +19,7 @@ const AppContext = createContext({
     hideItemValue: null,
     transformControlPivot: null,
     lightsInScene: [],
-    updateLightColorData: null,
+    updateLightData: null,
     requestAddLight: null
 
 });

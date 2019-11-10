@@ -15,15 +15,15 @@ export default function Lights(props) {
         setSceneLights(state.lightsInScene);
     }, [state.lightsInScene]);
 
-    const handleColorChange = (event, index, colorIndex, type) => {
+    const handleLightDataChange = (changedLightData: ILight) => {
         if (!sceneLights) return;
-        const value = hexToRgb(event.target.value);
+        console.log(11, changedLightData);
         dispatch({
             type: "UPDATE_LIGHT_OF_SCENE",
-            payload: { index, value, colorIndex, type }
+            payload: changedLightData
         });
         let _lights = sceneLights;
-        _lights[index].color[colorIndex] = value;
+        _lights[changedLightData.index] = changedLightData;
         setSceneLights(_lights);
     };
 
@@ -31,11 +31,12 @@ export default function Lights(props) {
         if (!eachLightDataInList) return;
         return eachLightDataInList.map((light, index) => {
             return (
-                <>
+                <React.Fragment key={light.id.toString()}>
                     <LightItem
-                        id={light.id}
+                        index={index}
                         light={light}
-                        onColorChange={handleColorChange}
+                        onColorChange={handleLightDataChange}
+                        onLightDataChange={handleLightDataChange}
                         onDelete={() => {
                             dispatch({
                                 type: "SET_ITEM_FOR_DELETE",
@@ -44,9 +45,15 @@ export default function Lights(props) {
                         }}
                     />
                     {(["PointLight", "SpotLight", "RectAreaLight"] as any).includes(light.type) && (
-                        <SubLightItem type={light.type} light={light} />
+                        <SubLightItem
+                            key={light.id.toString()}
+                            index={index}
+                            type={light.type}
+                            light={light}
+                            onLightDataChange={handleLightDataChange}
+                        />
                     )}
-                </>
+                </React.Fragment>
             );
         });
     };

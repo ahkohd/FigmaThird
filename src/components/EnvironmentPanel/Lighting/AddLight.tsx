@@ -5,7 +5,7 @@ import AppContext from "../../../context";
 
 export default function AddLight(props) {
     const [selectedLightType, setSelectedLightType]: any = React.useState("HemisphereLight");
-    const { state, dispatch }: any = React.useContext(AppContext);
+    const { dispatch }: any = React.useContext(AppContext);
 
     const buildLightOptions = () => {
         let output = [];

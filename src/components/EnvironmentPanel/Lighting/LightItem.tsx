@@ -2,17 +2,24 @@ import * as React from "react";
 
 import { Input, IconButton, Icon } from "figma-styled-components";
 import ColorSwatch from "./ColorSwatch";
+import { hexToRgb } from "../utils";
 
 export default function LightItem(props) {
     return (
-        <div className="light" key={props.id.toString()}>
+        <div className="light">
             {/* colors */}
-            {props.light.color.map((c, colorIndex) => {
+            {props.light.color.map((color, colorIndex) => {
                 return (
                     <ColorSwatch
-                        color={c}
+                        key={colorIndex.toString()}
+                        color={color}
                         onColorChange={event => {
-                            props.onColorChange(event, props.index, colorIndex, props.light.type);
+                            const newLightData = props.light;
+                            newLightData.color[colorIndex] = hexToRgb(event.target.value);
+                            props.onLightDataChange({
+                                index: props.index,
+                                ...newLightData
+                            });
                         }}
                     />
                 );
@@ -23,7 +30,13 @@ export default function LightItem(props) {
                 <Input
                     icon={<Icon name="Effects" />}
                     value={props.light.intensity}
-                    onChange={event => {}}
+                    onChange={event =>
+                        props.onLightDataChange({
+                            index: props.index,
+                            ...props.light,
+                            intensity: parseInt(event.target.value) || 0
+                        })
+                    }
                 />
             </div>
             <div className="light__action">

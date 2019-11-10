@@ -90,7 +90,7 @@ export default function reducer(state, { type, payload = null }) {
     case "UPDATE_LIGHT_OF_SCENE":
       return {
         ...state,
-        updateLightColorData: { index: payload.index, value: payload.value, colorIndex: payload.colorIndex, type: payload.type },
+        updateLightData: { ...payload },
       };
     case "REQUEST_ADD_LIGHT_TO_SCENE":
       return {

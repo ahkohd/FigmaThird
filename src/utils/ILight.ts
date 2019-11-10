@@ -11,5 +11,6 @@ export interface ILight {
     height?: number,
     decay?: number,
     lightMeshId?: number,
-    lightBackMeshId?: number
+    lightBackMeshId?: number,
+    index?: number
 }

@@ -90,12 +90,9 @@ export default function Viewport(props) {
 
     // Effect on light color change
     React.useEffect(() => {
-        if (!state.updateLightColorData) return;
-        handleLightColorChange(
-            state.lightsInScene[state.updateLightColorData.index].id,
-            state.lightsInScene[state.updateLightColorData.index]
-        );
-    }, [state.updateLightColorData]);
+        if (!state.updateLightData) return;
+        handleLightDataChange(state.updateLightData);
+    }, [state.updateLightData]);
 
     // Effect on request to add light
     React.useEffect(() => {
@@ -325,26 +322,26 @@ export default function Viewport(props) {
         });
     };
 
-    const handleLightColorChange = (id: number, lightData) => {
-        const lit = scene.getObjectById(id);
+    const handleLightDataChange = (lightData: ILight) => {
+        const lit = scene.getObjectById(lightData.id);
+        // update color
         if (lightData.type == "HemisphereLight") {
-            if (lightData.colorIndex == 0) {
-                lit.skyColor = new THREE.Color(
-                    `rgba(${lightData.color.r * 255}, ${lightData.color.g * 255}, ${lightData.color
-                        .b * 255})`
-                );
-                console.log("skyColor", lit.skyColor);
-            } else {
-                lit.groundColor = new THREE.Color(
-                    `rgba(${lightData.color.r * 255}, ${lightData.color.g * 255}, ${lightData.color
-                        .b * 255})`
-                );
-            }
+            lit.skyColor = new THREE.Color(
+                `rgba(${lightData.color[0].r * 255}, ${lightData.color[0].g * 255}, ${lightData
+                    .color[0].b * 255})`
+            );
+            console.log("skyColor", lit.skyColor);
+            lit.groundColor = new THREE.Color(
+                `rgba(${lightData.color[1].r * 255}, ${lightData.color[1].g * 255}, ${lightData
+                    .color[1].b * 255})`
+            );
+            if (lightData.intensity) lit.intensity = lightData.intensity;
         } else if (lightData.type == "RectAreaLight") {
             console.log("Rect Light");
             const rectLight = scene.getObjectById(lightData.helperId);
 
             const rectLightMesh = scene.getObjectById(lightData.lightMeshId);
+            // set rect light color
             rectLight.color.setRGB(
                 lightData.color[0].r,
                 lightData.color[0].g,
@@ -353,12 +350,35 @@ export default function Viewport(props) {
             (rectLightMesh.material as any).color
                 .copy(rectLight.color)
                 .multiplyScalar(rectLight.intensity);
+            // update intensity
+            if (lightData.intensity) {
+                rectLight.intensity = lightData.intensity;
+                rectLightMesh.material.color
+                    .copy(rectLight.color)
+                    .multiplyScalar(rectLight.intensity);
+            }
+
+            if (lightData.height) {
+                rectLight.height = lightData.height;
+                rectLightMesh.scale.y = lightData.height;
+            }
+
+            if (lightData.width) {
+                rectLight.width = lightData.width;
+                rectLightMesh.scale.x = lightData.width;
+            }
         } else {
             lit.color = new THREE.Color(
-                `rgba(${lightData.color.r * 255}, ${lightData.color.g * 255}, ${lightData.color.b *
-                    255})`
+                `rgba(${lightData.color[0].r * 255}, ${lightData.color[0].g * 255}, ${lightData
+                    .color[0].b * 255})`
             );
+            if (lightData.intensity) lit.intensity = lightData.intensity;
         }
+
+        // update other properties ...
+        if (lightData.decay) lit.decay = lightData.decay;
+        if (lightData.distance) lit.distance = lightData.distance;
+
         updateScene();
         console.log("change scene light");
     };
@@ -548,6 +568,7 @@ export default function Viewport(props) {
     };
 
     const removeItemFromScene = id => {
+        console.log("DELETE ID:", id);
         // remove from selectable objects ...
         try {
             const obj = scene.getObjectById(id);
