@@ -6,8 +6,20 @@ import { SpotLightSubItem } from "./SpotLightSubItem";
 export default function SubLightItem({ index, type, light, onLightDataChange }) {
     return (
         <>
-            {type == "PointLight" && <PointLightSubItem light={light} />}
-            {type == "SpotLight" && <SpotLightSubItem light={light} />}
+            {type == "PointLight" && (
+                <PointLightSubItem
+                    index={index}
+                    onLightDataChange={onLightDataChange}
+                    light={light}
+                />
+            )}
+            {type == "SpotLight" && (
+                <SpotLightSubItem
+                    index={index}
+                    onLightDataChange={onLightDataChange}
+                    light={light}
+                />
+            )}
             {type == "RectAreaLight" && (
                 <RectAreaLightSubItem
                     index={index}

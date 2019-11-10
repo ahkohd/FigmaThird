@@ -203,8 +203,7 @@ export default function Viewport(props) {
 
     const addAmbLight = (colors: THREE.Color[], intensity) => {
         let light1 = new THREE.AmbientLight(colors[0], intensity);
-        light1.position.set(0, 20, 0);
-        light1.castShadow = true;
+        light1.position.set(0, 0, 0);
         scene.add(light1);
 
         let out: ILight = {
@@ -245,8 +244,11 @@ export default function Viewport(props) {
 
     const addSpotLight = (colors: THREE.Color[], intensity) => {
         let light1 = new THREE.SpotLight(colors[0]);
-        light1.position.set(0, 20, 0);
+        light1.position.set(0, 80, 0);
         light1.castShadow = true;
+        light1.angle = 10;
+        // light1.penumbra = 2;
+        // light1.distance = 10;
         const light1Helper = new THREE.SpotLightHelper(light1);
         light1.intensity = intensity;
         scene.add(light1);
@@ -367,6 +369,9 @@ export default function Viewport(props) {
                 rectLight.width = lightData.width;
                 rectLightMesh.scale.x = lightData.width;
             }
+        } else if (lightData.type == "SpotLight") {
+            if (lightData.angle) lit.angle = lightData.angle;
+            if (lightData.penumbra) lit.penumbra = lightData.penumbra;
         } else {
             lit.color = new THREE.Color(
                 `rgba(${lightData.color[0].r * 255}, ${lightData.color[0].g * 255}, ${lightData
@@ -392,7 +397,7 @@ export default function Viewport(props) {
                 addDirLight([new THREE.Color()], 1);
                 break;
             case "PointLight":
-                addPointLight([new THREE.Color()], 1, 10);
+                addPointLight([new THREE.Color()], 2, 10);
                 break;
             case "RectAreaLight":
                 addRectLight([new THREE.Color()], 1, 50, 50);

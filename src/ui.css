@@ -52,11 +52,7 @@ canvas {
 
 .loader__backdrop {
     height: 100%;
-    background: linear-gradient(
-        to bottom,
-        black,
-        rgba(255, 0, 0, 0)
-    );
+    background: linear-gradient(to bottom, black, rgba(255, 0, 0, 0));
     position: absolute;
     display: flex;
 }
@@ -123,7 +119,8 @@ input[type="file"] {
     left: 0;
     bottom: 0;
     z-index: 10;
-    background: rgba(255, 255, 255, 0.445);
+    /* background: rgba(255, 255, 255, 0.445); */
+    background: white;
     width: 550px;
 }
 
