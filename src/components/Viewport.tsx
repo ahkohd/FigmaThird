@@ -8,14 +8,9 @@ import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLigh
 
 import Loader from "./Loader";
 import { encode } from "../utils/utils";
-import {
-    importOBJ,
-    importGLB,
-    importFBX,
-    fitCameraToSelection
-} from "../utils/Importer";
+import { importOBJ, importGLB, importFBX, fitCameraToSelection } from "../utils/Importer";
 import { Color } from "three";
-import { Light } from "../utils/Light";
+import { ILight } from "../utils/ILight";
 
 let scene;
 let camera;
@@ -32,9 +27,7 @@ let onDoubleClickPosition = new THREE.Vector2();
 let objectsForSelection: any[] = [];
 
 export default function Viewport(props) {
-    const { state, dispatch }: any = React.useContext(
-        AppContext
-    );
+    const { state, dispatch }: any = React.useContext(AppContext);
 
     const viewportRef = React.useRef();
     let port: HTMLDivElement;
@@ -42,41 +35,17 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
         init();
-        window.addEventListener(
-            "keydown",
-            handleUserKeyDownInput
-        );
-        window.addEventListener(
-            "keyup",
-            handleUserKeyUpInput
-        );
+        window.addEventListener("keydown", handleUserKeyDownInput);
+        window.addEventListener("keyup", handleUserKeyUpInput);
 
         // object selection listners
-        port.addEventListener(
-            "mousedown",
-            onMouseDown,
-            false
-        );
-        port.addEventListener(
-            "dblclick",
-            onDoubleClick,
-            false
-        );
+        port.addEventListener("mousedown", onMouseDown, false);
+        port.addEventListener("dblclick", onDoubleClick, false);
 
         return () => {
-            window.removeEventListener(
-                "keydown",
-                handleUserKeyDownInput
-            );
-            window.removeEventListener(
-                "keyup",
-                handleUserKeyUpInput
-            );
-            port.removeEventListener(
-                "mousedown",
-                onMouseDown,
-                false
-            );
+            window.removeEventListener("keydown", handleUserKeyDownInput);
+            window.removeEventListener("keyup", handleUserKeyUpInput);
+            port.removeEventListener("mousedown", onMouseDown, false);
         };
     }, []);
 
@@ -87,8 +56,7 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
         // React when use opens the inspector view ...
-        if (state.activeTab == "inspector")
-            handleInspector();
+        if (state.activeTab == "inspector") handleInspector();
     }, [state.activeTab]);
 
     // Watch for inspector selects an item
@@ -99,9 +67,7 @@ export default function Viewport(props) {
     // Watch for 3d obj to hide
     React.useEffect(() => {
         if (!state.hideItemValue) return;
-        handleItemHideToggle(
-            parseInt(state.hideItemValue.split("-")[0])
-        );
+        handleItemHideToggle(parseInt(state.hideItemValue.split("-")[0]));
     }, [state.hideItemValue]);
 
     // Watch for 3d obj to delete.
@@ -113,9 +79,7 @@ export default function Viewport(props) {
     // Watch for when user triggers mode change ..
     React.useEffect(() => {
         if (!state.transformControlMode) return;
-        handleTransformControlMode(
-            state.transformControlMode.split("-")[0]
-        );
+        handleTransformControlMode(state.transformControlMode.split("-")[0]);
     }, [state.transformControlMode]);
 
     // Watch for when user requests to set current transform object as pivot
@@ -128,12 +92,8 @@ export default function Viewport(props) {
     React.useEffect(() => {
         if (!state.updateLightColorData) return;
         handleLightColorChange(
-            state.lightsInScene[
-                state.updateLightColorData.index
-            ].id,
-            state.updateLightColorData.value,
-            state.updateLightColorData.colorIndex,
-            state.updateLightColorData.type
+            state.lightsInScene[state.updateLightColorData.index].id,
+            state.lightsInScene[state.updateLightColorData.index]
         );
     }, [state.updateLightColorData]);
 
@@ -189,32 +149,19 @@ export default function Viewport(props) {
             0x202020, // ground color
             5 // intensity
         );
-        const mainLight = new THREE.DirectionalLight(
-            0xffffff,
-            5
-        );
+        const mainLight = new THREE.DirectionalLight(0xffffff, 5);
         mainLight.position.set(10, 10, 10);
         scene.add(ambientLight, mainLight);
     };
 
-    const addHemiLight = (
-        colors: THREE.Color[],
-        intensity
-    ) => {
-        let light = new THREE.HemisphereLight(
-            colors[0],
-            colors[1],
-            intensity
-        );
-        let lightHelper = new THREE.HemisphereLightHelper(
-            light,
-            5
-        );
+    const addHemiLight = (colors: THREE.Color[], intensity) => {
+        let light = new THREE.HemisphereLight(colors[0], colors[1], intensity);
+        let lightHelper = new THREE.HemisphereLightHelper(light, 5);
         light.position.set(0, 20, 0);
         scene.add(light);
         scene.add(lightHelper);
 
-        let out: Light = {
+        let out: ILight = {
             id: light.id,
             color: [
                 light.skyColor || new Color(0xffffff),
@@ -231,28 +178,19 @@ export default function Viewport(props) {
         });
     };
 
-    const addDirLight = (
-        colors: THREE.Color[],
-        intensity
-    ) => {
-        let light1 = new THREE.DirectionalLight(
-            colors[0],
-            intensity
-        );
+    const addDirLight = (colors: THREE.Color[], intensity) => {
+        let light1 = new THREE.DirectionalLight(colors[0], intensity);
         light1.position.set(0, 20, 0);
         light1.castShadow = true;
         light1.shadow.camera.top = 18;
         light1.shadow.camera.bottom = -10;
         light1.shadow.camera.left = -12;
         light1.shadow.camera.right = 12;
-        const light1Helper = new THREE.DirectionalLightHelper(
-            light1,
-            5
-        );
+        const light1Helper = new THREE.DirectionalLightHelper(light1, 5);
         scene.add(light1);
         scene.add(light1Helper);
 
-        let out: Light = {
+        let out: ILight = {
             id: light1.id,
             color: [light1.color],
             intensity: light1.intensity,
@@ -266,26 +204,34 @@ export default function Viewport(props) {
         });
     };
 
-    const addPointLight = (
-        colors: THREE.Color[],
-        intensity,
-        distance
-    ) => {
-        let light1 = new THREE.PointLight(
-            colors[0],
-            intensity,
-            distance
-        );
+    const addAmbLight = (colors: THREE.Color[], intensity) => {
+        let light1 = new THREE.AmbientLight(colors[0], intensity);
         light1.position.set(0, 20, 0);
         light1.castShadow = true;
-        const light1Helper = new THREE.PointLightHelper(
-            light1,
-            5
-        );
+        scene.add(light1);
+
+        let out: ILight = {
+            id: light1.id,
+            color: [light1.color],
+            intensity: light1.intensity,
+            type: "AmbientLight"
+        };
+
+        dispatch({
+            type: "ADD_LIGHT_TO_SCENE",
+            payload: out
+        });
+    };
+
+    const addPointLight = (colors: THREE.Color[], intensity, distance) => {
+        let light1 = new THREE.PointLight(colors[0], intensity, distance);
+        light1.position.set(0, 20, 0);
+        light1.castShadow = true;
+        const light1Helper = new THREE.PointLightHelper(light1, 5);
         scene.add(light1);
         scene.add(light1Helper);
 
-        let out: Light = {
+        let out: ILight = {
             id: light1.id,
             color: [light1.color],
             intensity: light1.intensity,
@@ -300,21 +246,16 @@ export default function Viewport(props) {
         });
     };
 
-    const addSpotLight = (
-        colors: THREE.Color[],
-        intensity
-    ) => {
+    const addSpotLight = (colors: THREE.Color[], intensity) => {
         let light1 = new THREE.SpotLight(colors[0]);
         light1.position.set(0, 20, 0);
         light1.castShadow = true;
-        const light1Helper = new THREE.SpotLightHelper(
-            light1
-        );
+        const light1Helper = new THREE.SpotLightHelper(light1);
         light1.intensity = intensity;
         scene.add(light1);
         scene.add(light1Helper);
 
-        let out: Light = {
+        let out: ILight = {
             id: light1.id,
             color: [light1.color],
             intensity: light1.intensity,
@@ -334,28 +275,48 @@ export default function Viewport(props) {
         width: number,
         height: number
     ) => {
-        let light1 = new THREE.RectAreaLight(
-            colors[0],
-            intensity,
-            width,
-            height
-        );
-        light1.position.set(0, 20, 0);
-        const light1Helper = new THREE.RectAreaLightHelper(
-            light1
-        );
-        light1.lookAt(0, 0, 0);
-        scene.add(light1);
-        scene.add(light1Helper);
+        let lightGroup = new THREE.Group();
+        lightGroup.name = "RectAreaLightControl";
 
-        let out: Light = {
-            id: light1.id,
-            color: [light1.color],
-            intensity: light1.intensity,
+        let rectLight = new THREE.RectAreaLight(colors[0], intensity, width, height);
+        rectLight.position.set(0, 20, 0);
+        rectLight.lookAt(0, 0, 0);
+
+        let rectLightMesh = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(),
+            new THREE.MeshBasicMaterial({
+                side: THREE.BackSide
+            })
+        );
+        rectLightMesh.scale.x = rectLight.width;
+        rectLightMesh.scale.y = rectLight.height;
+
+        rectLight.color.setRGB(colors[0].r, colors[0].g, colors[0].b);
+        (rectLightMesh.material as any).color
+            .copy(rectLight.color)
+            .multiplyScalar(rectLight.intensity);
+
+        let rectLightMeshBack = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(),
+            new THREE.MeshBasicMaterial({ color: 0x080808 })
+        );
+
+        rectLight.add(rectLightMesh);
+        rectLightMesh.add(rectLightMeshBack);
+
+        lightGroup.add(rectLight);
+        scene.add(lightGroup);
+
+        let out: ILight = {
+            id: lightGroup.id,
+            color: [colors[0]],
+            intensity: intensity,
             type: "RectAreaLight",
-            helperId: light1Helper.id,
             width,
-            height
+            height,
+            helperId: rectLight.id,
+            lightMeshId: rectLightMesh.id,
+            lightBackMeshId: rectLightMeshBack.id
         };
 
         dispatch({
@@ -364,30 +325,38 @@ export default function Viewport(props) {
         });
     };
 
-    const handleLightColorChange = (
-        id: number,
-        color,
-        colorIndex,
-        type
-    ) => {
+    const handleLightColorChange = (id: number, lightData) => {
         const lit = scene.getObjectById(id);
-        if (type == "HemisphereLight") {
-            if (colorIndex == 0) {
+        if (lightData.type == "HemisphereLight") {
+            if (lightData.colorIndex == 0) {
                 lit.skyColor = new THREE.Color(
-                    `rgba(${color.r * 255}, ${color.g *
-                        255}, ${color.b * 255})`
+                    `rgba(${lightData.color.r * 255}, ${lightData.color.g * 255}, ${lightData.color
+                        .b * 255})`
                 );
                 console.log("skyColor", lit.skyColor);
             } else {
                 lit.groundColor = new THREE.Color(
-                    `rgba(${color.r * 255}, ${color.g *
-                        255}, ${color.b * 255})`
+                    `rgba(${lightData.color.r * 255}, ${lightData.color.g * 255}, ${lightData.color
+                        .b * 255})`
                 );
             }
+        } else if (lightData.type == "RectAreaLight") {
+            console.log("Rect Light");
+            const rectLight = scene.getObjectById(lightData.helperId);
+
+            const rectLightMesh = scene.getObjectById(lightData.lightMeshId);
+            rectLight.color.setRGB(
+                lightData.color[0].r,
+                lightData.color[0].g,
+                lightData.color[0].b
+            );
+            (rectLightMesh.material as any).color
+                .copy(rectLight.color)
+                .multiplyScalar(rectLight.intensity);
         } else {
             lit.color = new THREE.Color(
-                `rgba(${color.r * 255}, ${color.g *
-                    255}, ${color.b * 255})`
+                `rgba(${lightData.color.r * 255}, ${lightData.color.g * 255}, ${lightData.color.b *
+                    255})`
             );
         }
         updateScene();
@@ -397,10 +366,7 @@ export default function Viewport(props) {
     const handleAddLight = type => {
         switch (type.split("-")[0]) {
             case "HemisphereLight":
-                addHemiLight(
-                    [new THREE.Color(), new THREE.Color()],
-                    1
-                );
+                addHemiLight([new THREE.Color(), new THREE.Color()], 1);
                 break;
             case "DirectionalLight":
                 addDirLight([new THREE.Color()], 1);
@@ -409,47 +375,30 @@ export default function Viewport(props) {
                 addPointLight([new THREE.Color()], 1, 10);
                 break;
             case "RectAreaLight":
-                addRectLight(
-                    [new THREE.Color()],
-                    1,
-                    50,
-                    50
-                );
+                addRectLight([new THREE.Color()], 1, 50, 50);
                 break;
             case "SpotLight":
                 addSpotLight([new THREE.Color()], 1);
+                break;
+            case "AmbientLight":
+                addAmbLight([new THREE.Color()], 1);
                 break;
         }
     };
 
     const setUpFogWhiteLightScene = () => {
-        addHemiLight(
-            [
-                new THREE.Color(0xffffff),
-                new THREE.Color(0x444444)
-            ],
-            1
-        );
+        addHemiLight([new THREE.Color(0xffffff), new THREE.Color(0x444444)], 1);
         addDirLight([new THREE.Color(0xffffff)], 1.5);
         addGround();
         addGrid();
     };
 
     const setUpTransformControls = () => {
-        transformControl = new TransformControls(
-            camera,
-            port
-        );
-        transformControl.addEventListener(
-            "change",
-            updateScene
-        );
-        transformControl.addEventListener(
-            "dragging-changed",
-            function(event) {
-                orbitControl.enabled = !event.value;
-            }
-        );
+        transformControl = new TransformControls(camera, port);
+        transformControl.addEventListener("change", updateScene);
+        transformControl.addEventListener("dragging-changed", function(event) {
+            orbitControl.enabled = !event.value;
+        });
         // transformControl.addEventListener("mouseUp", function() {
         //   const object = transformControl.object;
 
@@ -494,21 +443,11 @@ export default function Viewport(props) {
     };
 
     const addGrid = () => {
-        let grid = new THREE.GridHelper(
-            1000,
-            50,
-            0x000000,
-            0x000000
-        );
+        let grid = new THREE.GridHelper(1000, 50, 0x000000, 0x000000);
         (grid.material as any).opacity = 0.2;
         (grid.material as any).transparent = true;
         grid.name = "grid";
-        fitCameraToSelection(
-            camera,
-            orbitControl,
-            [grid],
-            0.1
-        );
+        fitCameraToSelection(camera, orbitControl, [grid], 0.1);
         scene.add(grid);
     };
 
@@ -531,27 +470,18 @@ export default function Viewport(props) {
     const createOrbitControl = () => {
         orbitControl = new OrbitControls(camera, port);
         orbitControl.update();
-        orbitControl.addEventListener(
-            "change",
-            updateScene
-        );
+        orbitControl.addEventListener("change", updateScene);
     };
 
     const handleUserKeyDownInput = event => {
         switch (event.keyCode) {
             case 81: // Q
-                transformControl.setSpace(
-                    transformControl.space === "local"
-                        ? "world"
-                        : "local"
-                );
+                transformControl.setSpace(transformControl.space === "local" ? "world" : "local");
                 break;
 
             case 17: // Ctrl
                 transformControl.setTranslationSnap(100);
-                transformControl.setRotationSnap(
-                    THREE.Math.degToRad(15)
-                );
+                transformControl.setRotationSnap(THREE.Math.degToRad(15));
                 break;
 
             case 87: // W
@@ -568,19 +498,12 @@ export default function Viewport(props) {
 
             case 187:
             case 107: // +, =, num+
-                transformControl.setSize(
-                    transformControl.size + 0.1
-                );
+                transformControl.setSize(transformControl.size + 0.1);
                 break;
 
             case 189:
             case 109: // -, _, num-
-                transformControl.setSize(
-                    Math.max(
-                        transformControl.size - 0.1,
-                        0.1
-                    )
-                );
+                transformControl.setSize(Math.max(transformControl.size - 0.1, 0.1));
                 break;
 
             case 88: // X
@@ -616,10 +539,8 @@ export default function Viewport(props) {
             // empty objects for selection ....
             objectsForSelection = [];
             scene.children.forEach(element => {
-                if (element instanceof THREE.Group)
-                    scene.remove(element);
-                if (element instanceof THREE.Mesh)
-                    scene.remove(element);
+                if (element instanceof THREE.Group) scene.remove(element);
+                if (element instanceof THREE.Mesh) scene.remove(element);
             });
         } catch (e) {
             console.log(e);
@@ -630,12 +551,10 @@ export default function Viewport(props) {
         // remove from selectable objects ...
         try {
             const obj = scene.getObjectById(id);
-            if (transformControl.object.id == id)
-                transformControl.detach();
+            if (transformControl.object.id == id) transformControl.detach();
             let index = 0;
             for (const item of objectsForSelection) {
-                if (item.id == id)
-                    objectsForSelection.splice(index, 1);
+                if (item.id == id) objectsForSelection.splice(index, 1);
                 index += 1;
             }
             scene.remove(obj);
@@ -648,9 +567,7 @@ export default function Viewport(props) {
                         type: "REMOVE_LIGHT_FROM_SCENE",
                         payload: i
                     });
-                    scene.remove(
-                        scene.getObjectById(c.helperId)
-                    );
+                    scene.remove(scene.getObjectById(c.helperId));
                     break;
                 }
                 i += 1;
@@ -714,15 +631,9 @@ export default function Viewport(props) {
             blobs.bin,
             blobs.textures,
             glb => {
-                const {
-                    camera,
-                    scene,
-                    orbitControl
-                } = getThreeObjects();
+                const { camera, scene, orbitControl } = getThreeObjects();
                 dispatch({ type: "DONE_LOADING_MODEL" });
-                fitCameraToSelection(camera, orbitControl, [
-                    glb.scene
-                ]);
+                fitCameraToSelection(camera, orbitControl, [glb.scene]);
                 addObjectToScene(glb.scene, true);
                 transformControl.attach(glb.scene);
             },
@@ -739,15 +650,9 @@ export default function Viewport(props) {
             blobs.mtl,
             blobs.textures,
             model => {
-                const {
-                    camera,
-                    scene,
-                    orbitControl
-                } = getThreeObjects();
+                const { camera, scene, orbitControl } = getThreeObjects();
                 dispatch({ type: "DONE_LOADING_MODEL" });
-                fitCameraToSelection(camera, orbitControl, [
-                    model
-                ]);
+                fitCameraToSelection(camera, orbitControl, [model]);
                 addObjectToScene(model, true);
                 transformControl.attach(model);
             },
@@ -763,15 +668,9 @@ export default function Viewport(props) {
             blobs.fbx,
             blobs.textures,
             fbx => {
-                const {
-                    camera,
-                    scene,
-                    orbitControl
-                } = getThreeObjects();
+                const { camera, scene, orbitControl } = getThreeObjects();
                 dispatch({ type: "DONE_LOADING_MODEL" });
-                fitCameraToSelection(camera, orbitControl, [
-                    fbx
-                ]);
+                fitCameraToSelection(camera, orbitControl, [fbx]);
                 addObjectToScene(fbx, true);
                 transformControl.attach(fbx);
             },
@@ -794,9 +693,7 @@ export default function Viewport(props) {
         try {
             scene.getObjectByName("ground").visible = true;
             scene.getObjectByName("grid").visible = true;
-            transformControl.attach(
-                scene.getObjectByName("#preview_model#")
-            );
+            transformControl.attach(scene.getObjectByName("#preview_model#"));
         } catch (e) {}
     };
 
@@ -829,50 +726,28 @@ export default function Viewport(props) {
 
     const getMousePosition = (dom, x, y) => {
         const rect = dom.getBoundingClientRect();
-        return [
-            (x - rect.left) / rect.width,
-            (y - rect.top) / rect.height
-        ];
+        return [(x - rect.left) / rect.width, (y - rect.top) / rect.height];
     };
 
     const onMouseDown = event => {
         event.preventDefault();
-        const array = getMousePosition(
-            port,
-            event.clientX,
-            event.clientY
-        );
+        const array = getMousePosition(port, event.clientX, event.clientY);
         onDownPosition.fromArray(array);
         console.log(1, "DOWN_POS", onDownPosition);
-        document.addEventListener(
-            "mouseup",
-            onMouseUp,
-            false
-        );
+        document.addEventListener("mouseup", onMouseUp, false);
     };
 
     const onMouseUp = event => {
-        const array = getMousePosition(
-            port,
-            event.clientX,
-            event.clientY
-        );
+        const array = getMousePosition(port, event.clientX, event.clientY);
         onUpPosition.fromArray(array);
         console.log(2, "UP_POS", onDownPosition);
         handleClick();
-        document.removeEventListener(
-            "mouseup",
-            onMouseUp,
-            false
-        );
+        document.removeEventListener("mouseup", onMouseUp, false);
     };
 
     const handleClick = () => {
         if (onDownPosition.distanceTo(onUpPosition) === 0) {
-            const intersects = getIntersects(
-                onUpPosition,
-                getAllObjects()
-            );
+            const intersects = getIntersects(onUpPosition, getAllObjects());
             console.log(4, "INTERSET", intersects);
 
             if (intersects.length > 0) {
@@ -880,9 +755,7 @@ export default function Viewport(props) {
 
                 if (object.userData.object !== undefined) {
                     // a helper
-                    attachObjectToTransformControl(
-                        object.userData.object
-                    );
+                    attachObjectToTransformControl(object.userData.object);
                 } else {
                     attachObjectToTransformControl(object);
                 }
@@ -895,17 +768,10 @@ export default function Viewport(props) {
     };
 
     const onDoubleClick = event => {
-        const array = getMousePosition(
-            port,
-            event.clientX,
-            event.clientY
-        );
+        const array = getMousePosition(port, event.clientX, event.clientY);
         onDoubleClickPosition.fromArray(array);
 
-        const intersects = getIntersects(
-            onDoubleClickPosition,
-            getAllObjects()
-        );
+        const intersects = getIntersects(onDoubleClickPosition, getAllObjects());
 
         if (intersects.length > 0) {
             const intersect = intersects[0];
@@ -926,11 +792,7 @@ export default function Viewport(props) {
     };
 
     const setObjectAsPivotPoint = object => {
-        orbitControl.target.set(
-            object.position.x,
-            object.position.y,
-            object.position.z
-        );
+        orbitControl.target.set(object.position.x, object.position.y, object.position.z);
         orbitControl.update();
     };
 
@@ -955,10 +817,7 @@ export default function Viewport(props) {
 
     // Inspector selection handler ...
     const handleInspector = () => {
-        const sceneTree = traverseAndGetData(
-            new Tree(null),
-            scene
-        );
+        const sceneTree = traverseAndGetData(new Tree(null), scene);
         console.log("SCENE TREE", sceneTree);
         dispatch({
             type: "SET_SCENE_TREE",
@@ -968,11 +827,7 @@ export default function Viewport(props) {
 
     const traverseAndGetData = (parent, node) => {
         for (const childNode of node.children) {
-            if (
-                !(treeBlackList as any).includes(
-                    childNode.constructor.name
-                )
-            ) {
+            if (!(treeBlackList as any).includes(childNode.constructor.name)) {
                 const childTree = new Tree(parent);
                 // set tree data
                 childTree.id = childNode.id;
@@ -980,19 +835,11 @@ export default function Viewport(props) {
                 childTree.name =
                     childNode.name.trim() == ""
                         ? childTree.type
-                        : childNode.name.replace(
-                              " #preview_model#",
-                              ""
-                          );
+                        : childNode.name.replace(" #preview_model#", "");
                 childTree.visible = childNode.visible;
                 childTree.castShadow = childNode.castShadow;
-                childTree.receiveShadow =
-                    childNode.receiveShadow;
-                if (
-                    selectedID &&
-                    selectedID == childNode.id
-                )
-                    childTree.active = true;
+                childTree.receiveShadow = childNode.receiveShadow;
+                if (selectedID && selectedID == childNode.id) childTree.active = true;
                 parent.add(childTree);
                 traverseAndGetData(childTree, childNode);
             }
@@ -1001,17 +848,10 @@ export default function Viewport(props) {
         return parent;
     };
 
-    const handleUserSelectOnInspector = (
-        selectedTreeNode: Tree
-    ) => {
+    const handleUserSelectOnInspector = (selectedTreeNode: Tree) => {
         if (!selectedTreeNode) return;
-        console.log(
-            "[INSPECTOR]: USER SELECTS",
-            selectedTreeNode
-        );
-        attachObjectToTransformControl(
-            scene.getObjectById(selectedTreeNode.id)
-        );
+        console.log("[INSPECTOR]: USER SELECTS", selectedTreeNode);
+        attachObjectToTransformControl(scene.getObjectById(selectedTreeNode.id));
     };
 
     const handleItemHideToggle = id => {
@@ -1041,18 +881,13 @@ export default function Viewport(props) {
     return (
         <div>
             {state.loading && (
-                <Loader
-                    height={props.height}
-                    width={props.width}
-                    text={state.loadingText}></Loader>
+                <Loader height={props.height} width={props.width} text={state.loadingText}></Loader>
             )}
             <div
                 className="viewport"
                 ref={viewportRef}
                 style={{
-                    height: props.height
-                        ? props.height + "px"
-                        : "200px",
+                    height: props.height ? props.height + "px" : "200px",
                     width: props.width + "px"
                 }}></div>
         </div>

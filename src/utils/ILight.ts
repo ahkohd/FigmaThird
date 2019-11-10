@@ -1,14 +1,15 @@
-import { number } from "prop-types"
 import { Color } from "three";
 
-export interface Light {
+export interface ILight {
     id: number;
     color: Color[];
     intensity: number,
     type: string,
-    helperId: number,
+    helperId?: number,
     distance?: number,
     width?: number,
     height?: number,
-    decay?: number
+    decay?: number,
+    lightMeshId?: number,
+    lightBackMeshId?: number
 }

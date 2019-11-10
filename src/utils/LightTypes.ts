@@ -1,9 +1,10 @@
 const lightTypes = [
     "HemisphereLight",
+    "AmbientLight",
     "PointLight",
     "DirectionalLight",
     "RectAreaLight",
-    "SpotLight"
+    "SpotLight",
 ]
 
 export default lightTypes;
