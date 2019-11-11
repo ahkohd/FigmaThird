@@ -1,15 +1,17 @@
 import * as React from "react";
-import {
-    Icon,
-    Text,
-    IconButton
-} from "figma-styled-components";
+import { Icon, Text, IconButton, Checkbox } from "figma-styled-components";
 import AppContext from "../context";
+import styled from "styled-components";
+
+const ItemDiv = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transform: translate(65px);
+`;
 
 export default function StatPanel(props) {
-    const { state, dispatch }: any = React.useContext(
-        AppContext
-    );
+    const { state, dispatch }: any = React.useContext(AppContext);
 
     return (
         <div className="footstat">
@@ -20,51 +22,46 @@ export default function StatPanel(props) {
                     onClick={event => {
                         dispatch({
                             type: "SET_TRANSFORM_MODE",
-                            payload:
-                                "translate-" +
-                                new Date().getMilliseconds()
+                            payload: "translate-" + new Date().getMilliseconds()
                         });
-                    }}>
-                    Translate
-                </IconButton>
+                    }}></IconButton>
                 <IconButton
                     icon={<Icon name="Swap" />}
                     className="footstat__btn"
                     onClick={event => {
                         dispatch({
                             type: "SET_TRANSFORM_MODE",
-                            payload:
-                                "rotate-" +
-                                new Date().getMilliseconds()
+                            payload: "rotate-" + new Date().getMilliseconds()
                         });
-                    }}>
-                    Rotate
-                </IconButton>
+                    }}></IconButton>
                 <IconButton
                     icon={<Icon name="ResizeToFit" />}
                     className="footstat__btn"
                     onClick={event => {
                         dispatch({
                             type: "SET_TRANSFORM_MODE",
-                            payload:
-                                "scale-" +
-                                new Date().getMilliseconds()
+                            payload: "scale-" + new Date().getMilliseconds()
                         });
-                    }}>
-                    Scale
-                </IconButton>
+                    }}></IconButton>
                 <IconButton
                     icon={<Icon name="VectorHandles" />}
                     className="footstat__btn"
                     onClick={event => {
                         dispatch({
-                            type:
-                                "SET_TRANSFORM_OBJECT_AS_PIVOT",
+                            type: "SET_TRANSFORM_OBJECT_AS_PIVOT",
                             payload: new Date().getMilliseconds()
                         });
-                    }}>
-                    Set Pivot
-                </IconButton>
+                    }}></IconButton>
+
+                <ItemDiv>
+                    <Text>Grid</Text>
+                    <Checkbox
+                        checked={state.showGrid}
+                        onChange={event =>
+                            dispatch({ type: "SET_SHOW_GRID", payload: !state.showGrid })
+                        }
+                    />
+                </ItemDiv>
             </div>
         </div>
     );

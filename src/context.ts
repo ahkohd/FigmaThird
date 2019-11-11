@@ -20,7 +20,9 @@ const AppContext = createContext({
     transformControlPivot: null,
     lightsInScene: [],
     updateLightData: null,
-    requestAddLight: null
+    requestAddLight: null,
+    showGrid: true,
+    showFog: false,
 
 });
 

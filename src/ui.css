@@ -129,6 +129,7 @@ input[type="file"] {
     align-items: center;
     justify-content: space-between;
     width: 16px;
+    position: relative;
 }
 
 .footstat__btn {

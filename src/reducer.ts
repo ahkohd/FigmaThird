@@ -97,5 +97,10 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         requestAddLight: payload,
       };
+    case "SET_SHOW_GRID":
+      return {
+        ...state,
+        showGrid: payload,
+      };
   }
 }

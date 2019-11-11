@@ -17,6 +17,7 @@ let camera;
 let orbitControl;
 let transformControl;
 let renderer;
+let grid;
 
 // Object selection vars
 let raycaster = new THREE.Raycaster();
@@ -120,6 +121,12 @@ export default function Viewport(props) {
             payload: snap
         });
     };
+
+    // Effect when user
+    React.useEffect(() => {
+        if (!grid) return;
+        handleGridToggle(state.showGrid);
+    }, [state.showGrid]);
 
     const updateScene = () => {
         renderer.render(scene, camera);
@@ -468,12 +475,17 @@ export default function Viewport(props) {
     };
 
     const addGrid = () => {
-        let grid = new THREE.GridHelper(1000, 50, 0x000000, 0x000000);
+        grid = new THREE.GridHelper(1000, 50, 0x000000, 0x000000);
         (grid.material as any).opacity = 0.2;
         (grid.material as any).transparent = true;
         grid.name = "grid";
         fitCameraToSelection(camera, orbitControl, [grid], 0.1);
         scene.add(grid);
+    };
+
+    const handleGridToggle = toggle => {
+        grid.visible = toggle;
+        updateScene();
     };
 
     const createRenderer = () => {
