@@ -17,7 +17,7 @@ canvas {
 .panel {
     width: 100%;
     overflow: scroll;
-    height: 90%;
+    height: 83%;
 }
 
 .shelf {
@@ -116,12 +116,12 @@ input[type="file"] {
     height: 32px;
     border-top: 1px solid #ddd;
     position: absolute;
-    left: 0;
+    right: -1px;
     bottom: 0;
     z-index: 10;
     /* background: rgba(255, 255, 255, 0.445); */
     background: white;
-    width: 550px;
+    width: 250px;
 }
 
 .footstat__block {
