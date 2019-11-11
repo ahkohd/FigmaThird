@@ -74,7 +74,7 @@ export default function Viewport(props) {
     // Watch for 3d obj to delete.
     React.useEffect(() => {
         if (!state.hideItemDelete) return;
-        removeItemFromScene(state.hideItemDelete);
+        removeItemFromScene(state.hideItemDelete.id);
     }, [state.hideItemDelete]);
 
     // Watch for when user triggers mode change ..
@@ -589,7 +589,8 @@ export default function Viewport(props) {
         // remove from selectable objects ...
         try {
             const obj = scene.getObjectById(id);
-            if (transformControl.object.id == id) transformControl.detach();
+            if (transformControl.object && transformControl.object.id == id)
+                transformControl.detach();
             let index = 0;
             for (const item of objectsForSelection) {
                 if (item.id == id) objectsForSelection.splice(index, 1);

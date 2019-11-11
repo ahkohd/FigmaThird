@@ -1,7 +1,6 @@
 import * as React from "react";
 import { ILight } from "../../../utils/ILight";
 import AppContext from "../../../context";
-import { hexToRgb } from "../utils";
 import LightItem from "./LightItem";
 import SubLightItem from "./SubLightItem";
 
@@ -40,7 +39,7 @@ export default function Lights(props) {
                         onDelete={() => {
                             dispatch({
                                 type: "SET_ITEM_FOR_DELETE",
-                                payload: light.id
+                                payload: { id: light.id, timestamp: new Date().getMilliseconds() }
                             });
                         }}
                     />

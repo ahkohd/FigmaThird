@@ -2,20 +2,10 @@ import * as React from "react";
 import { Icon, IconButton } from "figma-styled-components";
 import AppContext from "../../context";
 
-export default function Header({
-    onClick,
-    style,
-    customStyles,
-    node
-}) {
-    const { state, dispatch }: any = React.useContext(
-        AppContext
-    );
+export default function Header({ onClick, style, customStyles, node }) {
+    const { state, dispatch }: any = React.useContext(AppContext);
 
-    const iconType =
-        node.children && node.children.length == 0
-            ? "Component"
-            : "Frame";
+    const iconType = node.children && node.children.length == 0 ? "Component" : "Frame";
     const extraStyle = {
         display: "flex",
         alignItems: "center",
@@ -55,9 +45,7 @@ export default function Header({
                         justifyContent: "flex-start"
                     }}>
                     <Icon name={iconType} />
-                    <div style={{ color: "#555" }}>
-                        {node.name}
-                    </div>
+                    <div style={{ color: "#555" }}>{node.name}</div>
                 </div>
                 <div
                     className="r"
@@ -75,17 +63,10 @@ export default function Header({
                             node.visible = !node.visible;
                             dispatch({
                                 type: "SET_ITEM_FOR_HIDE",
-                                payload:
-                                    node.id +
-                                    "-" +
-                                    new Date().getMilliseconds()
+                                payload: node.id + "-" + new Date().getMilliseconds()
                             });
                         }}>
-                        {node.visible ? (
-                            <Icon name="Visible" />
-                        ) : (
-                            <Icon name="Hidden" />
-                        )}
+                        {node.visible ? <Icon name="Visible" /> : <Icon name="Hidden" />}
                     </div>
                     <div
                         style={{
@@ -96,9 +77,11 @@ export default function Header({
                             icon={<Icon name="Trash" />}
                             onClick={() => {
                                 dispatch({
-                                    type:
-                                        "SET_ITEM_FOR_DELETE",
-                                    payload: node.id
+                                    type: "SET_ITEM_FOR_DELETE",
+                                    payload: {
+                                        id: node.id,
+                                        timestamp: new Date().getMilliseconds()
+                                    }
                                 });
                             }}
                         />
