@@ -9,11 +9,14 @@ export function RectAreaLightSubItem({ index, light, onLightDataChange }) {
                     width: "60px"
                 }}>
                 <Input
+                    min="0"
+                    type="number"
+                    step="0.01"
                     onChange={event =>
                         onLightDataChange({
                             index,
                             ...light,
-                            width: parseInt(event.target.value) || 0
+                            width: parseFloat(event.target.value)
                         })
                     }
                     icon={
@@ -33,6 +36,9 @@ export function RectAreaLightSubItem({ index, light, onLightDataChange }) {
                     width: "60px"
                 }}>
                 <Input
+                    min="0"
+                    type="number"
+                    step="0.01"
                     icon={
                         <Label
                             style={{
@@ -47,7 +53,7 @@ export function RectAreaLightSubItem({ index, light, onLightDataChange }) {
                         onLightDataChange({
                             index,
                             ...light,
-                            height: parseInt(event.target.value) || 0
+                            height: parseFloat(event.target.value)
                         })
                     }
                 />

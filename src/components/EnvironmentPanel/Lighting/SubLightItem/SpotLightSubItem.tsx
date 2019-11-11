@@ -10,6 +10,9 @@ export function SpotLightSubItem({ index, light, onLightDataChange }) {
                         width: "100px"
                     }}>
                     <Input
+                        min="0"
+                        type="number"
+                        step="0.01"
                         icon={
                             <Label
                                 style={{
@@ -20,12 +23,12 @@ export function SpotLightSubItem({ index, light, onLightDataChange }) {
                             </Label>
                         }
                         className="light__textInput--faint"
-                        value={light.decay || 0}
+                        value={light.decay}
                         onChange={event =>
                             onLightDataChange({
                                 index,
                                 ...light,
-                                decay: parseInt(event.target.value) || 0
+                                decay: parseFloat(event.target.value)
                             })
                         }
                     />
@@ -35,6 +38,9 @@ export function SpotLightSubItem({ index, light, onLightDataChange }) {
                         width: "60px"
                     }}>
                     <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
                         icon={
                             <Label
                                 style={{
@@ -44,12 +50,12 @@ export function SpotLightSubItem({ index, light, onLightDataChange }) {
                             </Label>
                         }
                         className="light__textInput--faint"
-                        value={light.distance || 0}
+                        value={light.distance}
                         onChange={event =>
                             onLightDataChange({
                                 index,
                                 ...light,
-                                distance: parseInt(event.target.value) || 0
+                                distance: parseFloat(event.target.value)
                             })
                         }
                     />
@@ -61,6 +67,9 @@ export function SpotLightSubItem({ index, light, onLightDataChange }) {
                         width: "100px"
                     }}>
                     <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
                         icon={
                             <Label
                                 style={{
@@ -71,12 +80,12 @@ export function SpotLightSubItem({ index, light, onLightDataChange }) {
                             </Label>
                         }
                         className="light__textInput--faint"
-                        value={light.penumbra || 0}
+                        value={light.penumbra}
                         onChange={event =>
                             onLightDataChange({
                                 index,
                                 ...light,
-                                penumbra: parseInt(event.target.value) || 0
+                                penumbra: parseFloat(event.target.value)
                             })
                         }
                     />
@@ -86,14 +95,18 @@ export function SpotLightSubItem({ index, light, onLightDataChange }) {
                         width: "60px"
                     }}>
                     <Input
+                        type="number"
+                        min="0"
+                        max="1.05"
+                        step="0.01"
                         icon={<Icon name="Angle" />}
                         className="light__textInput--faint"
-                        value={light.angle || 0}
+                        value={light.angle}
                         onChange={event =>
                             onLightDataChange({
                                 index,
                                 ...light,
-                                angle: parseInt(event.target.value) || 0
+                                angle: parseFloat(event.target.value)
                             })
                         }
                     />

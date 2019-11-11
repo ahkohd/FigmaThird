@@ -78,6 +78,7 @@ export async function importOBJ(obj, mtl, textures, cb, onerror) {
         const loadOBJ = async (callback, materials?) => {
             if (materials) loaderOBJ.setMaterials(materials);
             loaderOBJ.load(obj[0].name, (model) => {
+                enableShadowAndLightOnModel(model);
                 callback(model);
                 objectURLs.forEach((url) => URL.revokeObjectURL(url));
             });
@@ -116,6 +117,7 @@ export async function importGLB(glb, bin, textures, cb, onerror) {
         });
         const loaderGLTF = new GLTFLoader(manager);
         loaderGLTF.load(glb[0].name, (model) => {
+            enableShadowAndLightOnModel(model, 'gltf');
             cb(model);
             objectURLs.forEach((url) => URL.revokeObjectURL(url));
         });
@@ -144,6 +146,7 @@ export async function importFBX(fbx, textures, cb, onerror) {
             });
             const loaderFBX = new FBXLoader(manager);
             loaderFBX.load(fbx[0].name, (model) => {
+                enableShadowAndLightOnModel(model);
                 cb(model);
                 objectURLs.forEach((url) => URL.revokeObjectURL(url));
             }, (err) => {
@@ -153,6 +156,7 @@ export async function importFBX(fbx, textures, cb, onerror) {
             const loaderFBX = new FBXLoader();
             const fbx_uri: string = URL.createObjectURL(fbx[0]);
             loaderFBX.load(fbx_uri, (model) => {
+                enableShadowAndLightOnModel(model);
                 cb(model);
                 URL.revokeObjectURL(fbx_uri);
             })
@@ -163,6 +167,16 @@ export async function importFBX(fbx, textures, cb, onerror) {
         console.log(e)
         onerror(e);
     }
+}
+
+export default function enableShadowAndLightOnModel(importedModel, type?) {
+    const enableShadows = (type == 'gltf') ? importedModel.scene : importedModel;
+    enableShadows.traverse(function (child) {
+        if ((child as any).isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
 }
 
 

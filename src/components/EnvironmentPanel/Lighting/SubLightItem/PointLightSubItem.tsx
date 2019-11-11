@@ -9,6 +9,9 @@ export default function PointLightSubItem({ index, light, onLightDataChange }) {
                     width: "85px"
                 }}>
                 <Input
+                    min="0"
+                    type="number"
+                    step="0.01"
                     icon={
                         <Label
                             style={{
@@ -24,7 +27,7 @@ export default function PointLightSubItem({ index, light, onLightDataChange }) {
                         onLightDataChange({
                             index,
                             ...light,
-                            decay: parseInt(event.target.value) || 0
+                            decay: parseFloat(event.target.value)
                         })
                     }
                 />
@@ -34,6 +37,9 @@ export default function PointLightSubItem({ index, light, onLightDataChange }) {
                     width: "60px"
                 }}>
                 <Input
+                    min="0"
+                    type="number"
+                    step="0.01"
                     icon={
                         <Label
                             style={{
@@ -43,12 +49,12 @@ export default function PointLightSubItem({ index, light, onLightDataChange }) {
                         </Label>
                     }
                     className="light__textInput--faint"
-                    value={light.distance || 10}
+                    value={light.distance}
                     onChange={event =>
                         onLightDataChange({
                             index,
                             ...light,
-                            distance: parseInt(event.target.value) || 0
+                            distance: parseFloat(event.target.value)
                         })
                     }
                 />

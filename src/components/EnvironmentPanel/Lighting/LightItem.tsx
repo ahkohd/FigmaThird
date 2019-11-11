@@ -28,13 +28,16 @@ export default function LightItem(props) {
             <div className="light__name">{props.light.type}</div>
             <div className="light__textInput">
                 <Input
+                    type="number"
+                    min="0"
+                    step=".01"
                     icon={<Icon name="Effects" />}
                     value={props.light.intensity}
                     onChange={event =>
                         props.onLightDataChange({
                             index: props.index,
                             ...props.light,
-                            intensity: parseInt(event.target.value) || 0
+                            intensity: parseFloat(event.target.value)
                         })
                     }
                 />

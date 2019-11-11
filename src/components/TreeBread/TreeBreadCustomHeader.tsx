@@ -24,7 +24,7 @@ export default function Header({ onClick, style, customStyles, node }) {
             onClick={event => {
                 dispatch({
                     type: "SET_SELECT_OBJECT",
-                    payload: node
+                    payload: { node, timestamp: new Date().getMilliseconds() }
                 });
                 onClick(event);
             }}>
@@ -63,7 +63,7 @@ export default function Header({ onClick, style, customStyles, node }) {
                             node.visible = !node.visible;
                             dispatch({
                                 type: "SET_ITEM_FOR_HIDE",
-                                payload: node.id + "-" + new Date().getMilliseconds()
+                                payload: { id: node.id, timestamp: new Date().getMilliseconds() }
                             });
                         }}>
                         {node.visible ? <Icon name="Visible" /> : <Icon name="Hidden" />}

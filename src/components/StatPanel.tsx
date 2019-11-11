@@ -22,7 +22,7 @@ export default function StatPanel(props) {
                     onClick={event => {
                         dispatch({
                             type: "SET_TRANSFORM_MODE",
-                            payload: "translate-" + new Date().getMilliseconds()
+                            payload: { type: "translate", timestamp: new Date().getMilliseconds() }
                         });
                     }}></IconButton>
                 <IconButton
@@ -31,7 +31,7 @@ export default function StatPanel(props) {
                     onClick={event => {
                         dispatch({
                             type: "SET_TRANSFORM_MODE",
-                            payload: "rotate-" + new Date().getMilliseconds()
+                            payload: { type: "rotate", timestamp: new Date().getMilliseconds() }
                         });
                     }}></IconButton>
                 <IconButton
@@ -40,7 +40,7 @@ export default function StatPanel(props) {
                     onClick={event => {
                         dispatch({
                             type: "SET_TRANSFORM_MODE",
-                            payload: "scale-" + new Date().getMilliseconds()
+                            payload: { type: "scale", timestamp: new Date().getMilliseconds() }
                         });
                     }}></IconButton>
                 <IconButton
@@ -49,7 +49,7 @@ export default function StatPanel(props) {
                     onClick={event => {
                         dispatch({
                             type: "SET_TRANSFORM_OBJECT_AS_PIVOT",
-                            payload: new Date().getMilliseconds()
+                            payload: { timestamp: new Date().getMilliseconds() }
                         });
                     }}></IconButton>
 

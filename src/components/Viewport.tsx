@@ -62,13 +62,14 @@ export default function Viewport(props) {
 
     // Watch for inspector selects an item
     React.useEffect(() => {
-        handleUserSelectOnInspector(state.selectItemInTree);
+        if (!state.selectItemInTree) return;
+        handleUserSelectOnInspector(state.selectItemInTree.node);
     }, [state.selectItemInTree]);
 
     // Watch for 3d obj to hide
     React.useEffect(() => {
         if (!state.hideItemValue) return;
-        handleItemHideToggle(parseInt(state.hideItemValue.split("-")[0]));
+        handleItemHideToggle(parseInt(state.hideItemValue.id));
     }, [state.hideItemValue]);
 
     // Watch for 3d obj to delete.
@@ -80,7 +81,7 @@ export default function Viewport(props) {
     // Watch for when user triggers mode change ..
     React.useEffect(() => {
         if (!state.transformControlMode) return;
-        handleTransformControlMode(state.transformControlMode.split("-")[0]);
+        handleTransformControlMode(state.transformControlMode.type);
     }, [state.transformControlMode]);
 
     // Watch for when user requests to set current transform object as pivot
@@ -250,23 +251,40 @@ export default function Viewport(props) {
     };
 
     const addSpotLight = (colors: THREE.Color[], intensity) => {
-        let light1 = new THREE.SpotLight(colors[0]);
+        let light1 = new THREE.SpotLight(colors[0], intensity);
         light1.position.set(0, 80, 0);
+        light1.angle = Math.PI / 3;
+        light1.penumbra = 1;
+        light1.decay = 1;
+        light1.distance = 200;
         light1.castShadow = true;
-        light1.angle = 10;
-        // light1.penumbra = 2;
-        // light1.distance = 10;
+        // light1.shadow.mapSize.width = 1024;
+        // light1.shadow.mapSize.height = 1024;
+        // light1.shadow.camera.near = 0.1;
+        // light1.shadow.camera.far = 100;
+
+        const spotLightHelpers = new THREE.Group();
+        spotLightHelpers.name = "Spot Light Helpers";
+
         const light1Helper = new THREE.SpotLightHelper(light1);
-        light1.intensity = intensity;
+        spotLightHelpers.add(light1Helper);
+        const shadowCameraHelper = new THREE.CameraHelper(light1.shadow.camera);
+        spotLightHelpers.add(shadowCameraHelper);
+        spotLightHelpers.add(new THREE.AxesHelper(10));
+        light1.add(spotLightHelpers);
+
         scene.add(light1);
-        scene.add(light1Helper);
 
         let out: ILight = {
             id: light1.id,
-            color: [light1.color],
-            intensity: light1.intensity,
+            color: colors,
+            intensity: intensity,
             type: "SpotLight",
-            helperId: light1Helper.id
+            angle: Math.PI / 3,
+            decay: 2,
+            penumbra: 0.05,
+            distance: 10,
+            helperId: spotLightHelpers.id
         };
 
         dispatch({
@@ -377,8 +395,20 @@ export default function Viewport(props) {
                 rectLightMesh.scale.x = lightData.width;
             }
         } else if (lightData.type == "SpotLight") {
+            lit.color = new THREE.Color(
+                `rgba(${lightData.color[0].r * 255}, ${lightData.color[0].g * 255}, ${lightData
+                    .color[0].b * 255})`
+            );
+            if (lightData.intensity) lit.intensity = lightData.intensity;
             if (lightData.angle) lit.angle = lightData.angle;
             if (lightData.penumbra) lit.penumbra = lightData.penumbra;
+            const helpers = scene.getObjectById(lightData.helperId);
+            helpers.traverse(helper => {
+                if (typeof helper.update == "function") {
+                    console.log("Update Helper", helper.constructor.name);
+                    helper.update();
+                }
+            });
         } else {
             lit.color = new THREE.Color(
                 `rgba(${lightData.color[0].r * 255}, ${lightData.color[0].g * 255}, ${lightData
@@ -410,7 +440,7 @@ export default function Viewport(props) {
                 addRectLight([new THREE.Color()], 1, 50, 50);
                 break;
             case "SpotLight":
-                addSpotLight([new THREE.Color()], 1);
+                addSpotLight([new THREE.Color()], 100);
                 break;
             case "AmbientLight":
                 addAmbLight([new THREE.Color()], 1);
