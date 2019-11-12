@@ -102,5 +102,20 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         showGrid: payload,
       };
+    case "SET_HIDE_GROUND_ON_SNAP":
+      return {
+        ...state,
+        hideGroundOnSnap: payload,
+      };
+    case "SNAP":
+      return {
+        ...state,
+        snap: payload,
+      };
+    case "SET_FOG_DATA":
+      return {
+        ...state,
+        fogData: payload
+      }
   }
 }

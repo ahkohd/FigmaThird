@@ -22,7 +22,14 @@ const AppContext = createContext({
     updateLightData: null,
     requestAddLight: null,
     showGrid: true,
-    showFog: false,
+    fogData: {
+        visible: false,
+        far: 600,
+        near: 10,
+        color: { r: 255, g: 255, b: 255 }
+    },
+    hideGroundOnSnap: { value: true, _t: new Date().getMilliseconds() },
+    snap: null
 
 });
 

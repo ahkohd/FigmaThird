@@ -102,6 +102,12 @@ export default function Viewport(props) {
         handleAddLight(state.requestAddLight);
     }, [state.requestAddLight]);
 
+    // Effect when user changes fog data
+    React.useEffect(() => {
+        handleFogDataChange(state.fogData);
+        console.log("Fog Data");
+    }, [state.fogData]);
+
     const init = () => {
         // Container
         port = viewportRef.current;
@@ -115,12 +121,9 @@ export default function Viewport(props) {
         setUpTransformControls();
         setUpFogWhiteLightScene();
         createMeshes();
+        createFog();
         scene.add(transformControl);
         renderer.setAnimationLoop(updateScene);
-        dispatch({
-            type: "SET_SNAP_HANDLER",
-            payload: snap
-        });
     };
 
     // Effect when user
@@ -128,6 +131,12 @@ export default function Viewport(props) {
         if (!grid) return;
         handleGridToggle(state.showGrid);
     }, [state.showGrid]);
+
+    // Effect on snap
+    React.useEffect(() => {
+        if (state.snap == null) return;
+        snap(state.hideGroundOnSnap.value);
+    }, [state.snap]);
 
     const updateScene = () => {
         renderer.render(scene, camera);
@@ -148,15 +157,30 @@ export default function Viewport(props) {
         camera.position.set(10, 20, 30);
     };
 
-    const createLights = () => {
-        const ambientLight = new THREE.HemisphereLight(
-            0xddeeff, // sky color
-            0x202020, // ground color
-            5 // intensity
+    const createFog = () => {
+        const color = 0xffffff; // white
+        const near = 10;
+        const far = 100;
+        scene.fog = new THREE.Fog(color, near, far);
+    };
+
+    const handleFogDataChange = changedData => {
+        console.log(changedData);
+        if (!changedData.visible) {
+            scene.fog.near = 0.1;
+            scene.fog.far = 50000;
+            updateScene();
+            return;
+        }
+
+        scene.fog.color = new THREE.Color(
+            `rgb(${changedData.color.r * 255}, ${changedData.color.g * 255}, ${changedData.color.b *
+                255})`
         );
-        const mainLight = new THREE.DirectionalLight(0xffffff, 5);
-        mainLight.position.set(10, 10, 10);
-        scene.add(ambientLight, mainLight);
+        scene.fog.far = changedData.far;
+        scene.fog.near = changedData.near;
+
+        updateScene();
     };
 
     const addHemiLight = (colors: THREE.Color[], intensity) => {
@@ -749,25 +773,43 @@ export default function Viewport(props) {
         );
     };
 
-    const clearForSnap = () => {
+    const clearForSnap = hideGround => {
         try {
-            scene.getObjectByName("ground").visible = false;
+            console.log("HHide", hideGround);
+            if (hideGround) scene.getObjectByName("ground").visible = false;
             scene.getObjectByName("grid").visible = false;
             transformControl.detach();
+            toggleLightHelpers();
         } catch (e) {}
         // clear grid and floor...
     };
 
-    const fallbackFromSnap = () => {
+    const toggleLightHelpers = (show = false) => {
+        for (const light of state.lightsInScene) {
+            if (light.type == "RectAreaLight") {
+                const rectLight = scene.getObjectById(light.helperId);
+                for (const child of rectLight.children) {
+                    console.log("hide ", child.constructor.name);
+                    child.visible = show;
+                }
+            } else {
+                scene.getObjectById(light.helperId).visible = show;
+            }
+        }
+        updateScene();
+    };
+
+    const fallbackFromSnap = hideGround => {
         try {
-            scene.getObjectByName("ground").visible = true;
+            if (hideGround) scene.getObjectByName("ground").visible = true;
             scene.getObjectByName("grid").visible = true;
             transformControl.attach(scene.getObjectByName("#preview_model#"));
+            toggleLightHelpers(true);
         } catch (e) {}
     };
 
-    const snap = (event?) => {
-        clearForSnap();
+    const snap = hideGround => {
+        clearForSnap(hideGround);
         renderer.render(scene, camera);
         renderer.domElement.toBlob(blob => {
             encode(blob).then(imageData => {
@@ -780,7 +822,7 @@ export default function Viewport(props) {
                     },
                     "*"
                 );
-                fallbackFromSnap();
+                fallbackFromSnap(hideGround);
             });
         });
     };
@@ -861,6 +903,7 @@ export default function Viewport(props) {
     };
 
     const setObjectAsPivotPoint = object => {
+        if (!object) return;
         orbitControl.target.set(object.position.x, object.position.y, object.position.z);
         orbitControl.update();
     };

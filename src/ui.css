@@ -13,7 +13,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 * {
-    user-select: none;
+    user-select: none !important;
 }
 canvas {
     outline: none;
@@ -79,7 +79,7 @@ canvas {
 
 .divider {
     border-bottom: 1px solid #eee;
-    padding: 20px !important;
+    padding: 20px;
 }
 
 /* utils */
