@@ -22,7 +22,7 @@ export default function PointLightSubItem({ index, light, onLightDataChange }) {
                         </Label>
                     }
                     className="light__textInput--faint"
-                    value={light.decay || 2}
+                    value={light.decay}
                     onChange={event =>
                         onLightDataChange({
                             index,

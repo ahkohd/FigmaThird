@@ -211,10 +211,13 @@ export default function Viewport(props) {
         let light1 = new THREE.DirectionalLight(colors[0], intensity);
         light1.position.set(0, 20, 0);
         light1.castShadow = true;
-        light1.shadow.camera.top = 18;
-        light1.shadow.camera.bottom = -10;
-        light1.shadow.camera.left = -12;
-        light1.shadow.camera.right = 12;
+        light1.shadow.camera.top = 1000;
+        light1.shadow.camera.bottom = -1000;
+        light1.shadow.camera.left = -1000;
+        light1.shadow.camera.right = 1000;
+        light1.shadow.mapSize.width = 1024 * 5;
+        light1.shadow.mapSize.height = 1024 * 5;
+
         const light1Helper = new THREE.DirectionalLightHelper(light1, 5);
         scene.add(light1);
         scene.add(light1Helper);
@@ -253,8 +256,9 @@ export default function Viewport(props) {
 
     const addPointLight = (colors: THREE.Color[], intensity, distance) => {
         let light1 = new THREE.PointLight(colors[0], intensity, distance);
-        light1.position.set(0, 20, 0);
+        light1.position.set(0, 50, 0);
         light1.castShadow = true;
+        light1.decay = 1;
         const light1Helper = new THREE.PointLightHelper(light1, 5);
         scene.add(light1);
         scene.add(light1Helper);
@@ -265,7 +269,8 @@ export default function Viewport(props) {
             intensity: light1.intensity,
             type: "PointLight",
             helperId: light1Helper.id,
-            distance
+            distance,
+            decay: 1
         };
 
         dispatch({
@@ -282,11 +287,8 @@ export default function Viewport(props) {
         light1.decay = 1;
         light1.distance = 200;
         light1.castShadow = true;
-        // light1.shadow.mapSize.width = 1024;
-        // light1.shadow.mapSize.height = 1024;
-        // light1.shadow.camera.near = 0.1;
-        // light1.shadow.camera.far = 100;
-
+        light1.shadow.mapSize.width = 1024 * 5;
+        light1.shadow.mapSize.height = 1024 * 5;
         const spotLightHelpers = new THREE.Group();
         spotLightHelpers.name = "Spot Light Helpers";
 
@@ -458,7 +460,7 @@ export default function Viewport(props) {
                 addDirLight([new THREE.Color()], 1);
                 break;
             case "PointLight":
-                addPointLight([new THREE.Color()], 2, 10);
+                addPointLight([new THREE.Color()], 20, 100);
                 break;
             case "RectAreaLight":
                 addRectLight([new THREE.Color()], 1, 50, 50);
@@ -515,7 +517,7 @@ export default function Viewport(props) {
     const addGround = () => {
         // ground
         let mesh = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(1000, 1000),
+            new THREE.PlaneBufferGeometry(1000, 1000, 100, 100),
             new THREE.MeshPhongMaterial({
                 color: 0xffffff,
                 depthWrite: false
