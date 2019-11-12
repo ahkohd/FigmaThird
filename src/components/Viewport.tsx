@@ -776,7 +776,8 @@ export default function Viewport(props) {
     const clearForSnap = hideGround => {
         try {
             console.log("HHide", hideGround);
-            if (hideGround) scene.getObjectByName("ground").visible = false;
+            const ground = scene.getObjectByName("ground");
+            if (ground && hideGround) ground.visible = false;
             scene.getObjectByName("grid").visible = false;
             transformControl.detach();
             toggleLightHelpers();
@@ -801,7 +802,8 @@ export default function Viewport(props) {
 
     const fallbackFromSnap = hideGround => {
         try {
-            if (hideGround) scene.getObjectByName("ground").visible = true;
+            const ground = scene.getObjectByName("ground");
+            if (hideGround) ground.visible = true;
             scene.getObjectByName("grid").visible = true;
             transformControl.attach(scene.getObjectByName("#preview_model#"));
             toggleLightHelpers(true);

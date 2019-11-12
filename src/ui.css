@@ -158,6 +158,8 @@ input[type="file"] {
     cursor: pointer !important;
     user-select: none;
     max-width: 45px !important;
+    font-size: 16px;
+    transition: ease all 0.3s;
 }
 
 .tab__item:hover {
@@ -166,7 +168,6 @@ input[type="file"] {
 
 .tab__item--active {
     color: #333 !important;
-    font-weight: 600 !important;
 }
 
 .light {
