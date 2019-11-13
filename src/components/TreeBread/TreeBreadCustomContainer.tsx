@@ -3,8 +3,6 @@ import { VelocityComponent } from "velocity-react";
 import AppContext from "../../context";
 
 function Container(props) {
-    const { state, dispatch }: any = React.useContext(AppContext);
-
     const {
         style,
         decorators,
