@@ -3,8 +3,16 @@ import { Icon, IconButton, Text, Label } from "figma-styled-components";
 import AppContext from "../../context";
 import styled from "styled-components";
 
-export default function Header({ onClick, style, customStyles, node }) {
-    const { dispatch }: any = React.useContext(AppContext);
+export function traverseNode(parentNode, cb) {
+    console.log(parentNode);
+    for (const node of parentNode) {
+        cb(node);
+        traverseNode(node.children, cb);
+    }
+}
+
+export default function Header({ onClick, style, customStyles, node, active }) {
+    const { state, dispatch }: any = React.useContext(AppContext);
 
     const iconType = node.children && node.children.length == 0 ? "Component" : "Frame";
     const extraStyle = {
@@ -25,14 +33,6 @@ export default function Header({ onClick, style, customStyles, node }) {
         font-family: "Inter", sans-serif;
     `;
 
-    const traverseNode = (parentNode, cb) => {
-        console.log(parentNode);
-        for (const node of parentNode) {
-            cb(node);
-            traverseNode(node.children, cb);
-        }
-    };
-
     return (
         <div
             style={{ ...style.base, width: "70%" }}
@@ -46,10 +46,9 @@ export default function Header({ onClick, style, customStyles, node }) {
             className="TreeHeader">
             <div
                 style={
-                    node.selected
+                    active
                         ? {
-                              ...style.title,
-                              ...customStyles.header.title,
+                              ...style.base.title,
                               ...extraStyle
                           }
                         : { ...style.title, ...extraStyle }

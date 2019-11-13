@@ -127,5 +127,11 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         fogData: payload
       }
+
+    case "SET_VIEWPORT_SELECTED_ITEM":
+      return {
+        ...state,
+        viewPortSelectedItem: payload
+      }
   }
 }

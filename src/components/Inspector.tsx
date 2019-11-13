@@ -2,17 +2,40 @@ import * as React from "react";
 import { Treebeard, decorators } from "react-treebeard";
 import AppContext from "../context";
 import style from "../utils/ThreeBreadStyle";
-import Header from "./TreeBread/TreeBreadCustomHeader";
+import Header, { traverseNode } from "./TreeBread/TreeBreadCustomHeader";
 import Container from "./TreeBread/TreeBreadCustomContainer";
 import Toggle from "./TreeBread/TreeBreadCustomToggle";
 
 export default function Inspector() {
-    const { state, dispatch }: any = React.useContext(
-        AppContext
-    );
-
+    const { state, dispatch }: any = React.useContext(AppContext);
     const [data, setData] = React.useState(state.sceneTree);
     const [cursor, setCursor]: any = React.useState(false);
+
+    React.useEffect(() => {
+        if (state.viewPortSelectedItem != null) {
+            console.log("VIEWPORT SELECTED", state.viewPortSelectedItem);
+            markSelected({ ...data }, state.viewPortSelectedItem.id, newData => {
+                console.log("2 set new data", newData);
+                setData(newData);
+            });
+        }
+    }, [state.viewPortSelectedItem]);
+
+    const markSelected = (parentNode, id, done) => {
+        for (const child of parentNode.children) {
+            if (child.id == id) {
+                console.log("1 MARKED", id);
+                child.active = true;
+            } else {
+                child.active = false;
+                if (child.children.length > 0) child.toggled = true;
+            }
+            markSelected(child, id, false);
+        }
+        if (done) {
+            done(parentNode);
+        }
+    };
 
     React.useEffect(() => {
         if (!state.sceneTree) return;
@@ -20,8 +43,14 @@ export default function Inspector() {
     }, [state.sceneTree]);
 
     const onToggle = (node, toggled) => {
+        // return;
         if (cursor) {
             cursor.active = false;
+            traverseNode(data.children, childNode => {
+                if (childNode.id != cursor.id) {
+                    childNode.active = false;
+                }
+            });
         }
         node.active = true;
         if (node.children) {
@@ -31,8 +60,8 @@ export default function Inspector() {
         setData(Object.assign({}, data));
     };
 
-    return (
-        <div className="panel">
+    const buildTree = data => {
+        return (
             <Treebeard
                 data={data.children}
                 decorators={{
@@ -44,6 +73,8 @@ export default function Inspector() {
                 style={style}
                 onToggle={onToggle}
             />
-        </div>
-    );
+        );
+    };
+
+    return <div className="panel">{buildTree(data)}</div>;
 }

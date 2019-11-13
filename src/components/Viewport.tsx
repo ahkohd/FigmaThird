@@ -909,11 +909,19 @@ export default function Viewport(props) {
         }
     };
 
-    const attachObjectToTransformControl = object => {
+    const attachObjectToTransformControl = (object, viewport = true) => {
         if (object.name == "grid") return;
         transformControl.detach();
         transformControl.attach(object);
         selectedID = object.id;
+        if (viewport) {
+            console.log("NOT Viewport");
+
+            dispatch({
+                type: "SET_VIEWPORT_SELECTED_ITEM",
+                payload: { id: selectedID, _t: new Date().getTime() }
+            });
+        }
     };
 
     const getAllObjects = () => {
@@ -981,7 +989,7 @@ export default function Viewport(props) {
     const handleUserSelectOnInspector = (selectedTreeNode: Tree) => {
         if (!selectedTreeNode) return;
         console.log("[INSPECTOR]: USER SELECTS", selectedTreeNode);
-        attachObjectToTransformControl(scene.getObjectById(selectedTreeNode.id));
+        attachObjectToTransformControl(scene.getObjectById(selectedTreeNode.id), false);
     };
 
     const handleItemHideToggle = id => {

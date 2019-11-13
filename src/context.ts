@@ -31,7 +31,8 @@ const AppContext = createContext({
         color: { r: 255, g: 255, b: 255 }
     },
     hideGroundOnSnap: { value: true, _t: new Date().getMilliseconds() },
-    snap: null
+    snap: null,
+    viewPortSelectedItem: null
 
 });
 

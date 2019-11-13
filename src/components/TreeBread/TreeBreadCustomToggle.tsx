@@ -16,7 +16,12 @@ const Toggle = ({ style, onClick, node }) => {
     const points = `0,0 0,${height} ${width},${midHeight}`;
 
     return (
-        <div style={style.base} onClick={onClick}>
+        <div
+            style={style.base}
+            onClick={event => {
+                event.stopPropagation();
+                onClick();
+            }}>
             <Div style={style.wrapper}>
                 {node.children && node.children.length > 0 && (
                     <svg {...{ height, width }}>

@@ -1,18 +1,8 @@
 import * as React from "react";
 import { VelocityComponent } from "velocity-react";
-import AppContext from "../../context";
 
 function Container(props) {
-    const {
-        style,
-        decorators,
-        terminal,
-        node,
-        onSelect,
-        customStyles,
-        onClick,
-        animations
-    }: any = props;
+    const { style, decorators, terminal, node, customStyles, onClick, animations }: any = props;
 
     const renderToggle = () => {
         if (!animations) {
@@ -39,6 +29,7 @@ function Container(props) {
             {!terminal ? renderToggle() : null}
             <decorators.Header
                 node={node}
+                active={node.active}
                 style={style.header}
                 customStyles={customStyles}
                 onClick={onClick}
