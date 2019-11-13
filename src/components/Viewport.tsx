@@ -8,7 +8,7 @@ import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLigh
 
 import Loader from "./Loader";
 import { encode } from "../utils/utils";
-import { importOBJ, importGLB, importFBX, fitCameraToSelection } from "../utils/Importer";
+import { importOBJ, importGLB, importFBX } from "../utils/Importer";
 import { Color } from "three";
 import { ILight } from "../utils/ILight";
 
@@ -547,7 +547,7 @@ export default function Viewport(props) {
         (grid.material as any).opacity = 0.2;
         (grid.material as any).transparent = true;
         grid.name = "grid";
-        fitCameraToSelection(camera, orbitControl, [grid], 0.1);
+        // fitCameraToSelection(camera, orbitControl, [grid], 0.1);
         scene.add(grid);
     };
 
@@ -576,6 +576,8 @@ export default function Viewport(props) {
         orbitControl = new OrbitControls(camera, port);
         orbitControl.update();
         orbitControl.addEventListener("change", updateScene);
+        orbitControl.maxDistance = 8000;
+        orbitControl.minDistance = 20;
     };
 
     const handleUserKeyDownInput = event => {
@@ -740,7 +742,7 @@ export default function Viewport(props) {
             glb => {
                 const { camera, scene, orbitControl } = getThreeObjects();
                 dispatch({ type: "DONE_LOADING_MODEL" });
-                fitCameraToSelection(camera, orbitControl, [glb.scene]);
+                // fitCameraToSelection(camera, orbitControl, [glb.scene]);
                 addObjectToScene(glb.scene, true);
                 transformControl.attach(glb.scene);
             },
@@ -759,7 +761,7 @@ export default function Viewport(props) {
             model => {
                 const { camera, scene, orbitControl } = getThreeObjects();
                 dispatch({ type: "DONE_LOADING_MODEL" });
-                fitCameraToSelection(camera, orbitControl, [model]);
+                // fitCameraToSelection(camera, orbitControl, [model]);
                 addObjectToScene(model, true);
                 transformControl.attach(model);
             },
@@ -777,7 +779,7 @@ export default function Viewport(props) {
             fbx => {
                 const { camera, scene, orbitControl } = getThreeObjects();
                 dispatch({ type: "DONE_LOADING_MODEL" });
-                fitCameraToSelection(camera, orbitControl, [fbx]);
+                // fitCameraToSelection(camera, orbitControl, [fbx]);
                 addObjectToScene(fbx, true);
                 transformControl.attach(fbx);
             },

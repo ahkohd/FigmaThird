@@ -25,6 +25,14 @@ export default function Header({ onClick, style, customStyles, node }) {
         font-family: "Inter", sans-serif;
     `;
 
+    const traverseNode = (parentNode, cb) => {
+        console.log(parentNode);
+        for (const node of parentNode) {
+            cb(node);
+            traverseNode(node.children, cb);
+        }
+    };
+
     return (
         <div
             style={{ ...style.base, width: "70%" }}
@@ -71,6 +79,11 @@ export default function Header({ onClick, style, customStyles, node }) {
                             onClick={event => {
                                 event.stopPropagation();
                                 node.receiveShadow = !node.receiveShadow;
+
+                                traverseNode(node.children, eachNode => {
+                                    eachNode.receiveShadow = node.receiveShadow;
+                                });
+
                                 dispatch({
                                     type: "SET_ITEM_RSHADOW",
                                     payload: {
@@ -96,6 +109,9 @@ export default function Header({ onClick, style, customStyles, node }) {
                             onClick={event => {
                                 event.stopPropagation();
                                 node.castShadow = !node.castShadow;
+                                traverseNode(node.children, eachNode => {
+                                    eachNode.castShadow = node.castShadow;
+                                });
                                 dispatch({
                                     type: "SET_ITEM_CSHADOW",
                                     payload: {
