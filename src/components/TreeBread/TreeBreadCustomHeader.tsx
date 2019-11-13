@@ -4,7 +4,6 @@ import AppContext from "../../context";
 import styled from "styled-components";
 
 export function traverseNode(parentNode, cb) {
-    console.log(parentNode);
     for (const node of parentNode) {
         cb(node);
         traverseNode(node.children, cb);
@@ -41,7 +40,9 @@ export default function Header({ onClick, style, customStyles, node, active }) {
                     type: "SET_SELECT_OBJECT",
                     payload: { node, timestamp: new Date().getMilliseconds() }
                 });
-                onClick(event);
+                // a hack, see ui.tsx
+                (window as any).THIRD_INSPECTOR_TOGGLER = "header";
+                onClick();
             }}
             className="TreeHeader">
             <div

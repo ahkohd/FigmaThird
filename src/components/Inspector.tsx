@@ -21,21 +21,40 @@ export default function Inspector() {
         }
     }, [state.viewPortSelectedItem]);
 
-    const markSelected = (parentNode, id, done) => {
+    const markSelected = (parentNode, id, done, marked = false) => {
         for (const child of parentNode.children) {
             if (child.id == id) {
-                console.log("1 MARKED", id);
+                console.log("1 MARKED @{SELECTED}", id);
                 child.active = true;
+                marked = true;
+                markSelected(child, id, false, true);
             } else {
                 child.active = false;
-                if (child.children.length > 0) child.toggled = true;
+                if (child.children.length > 0 && marked == false) child.toggled = true;
+                markSelected(child, id, false);
             }
-            markSelected(child, id, false);
         }
         if (done) {
             done(parentNode);
         }
     };
+
+    // formal marked that opens other groups when another stuff is selected
+    // const markSelected = (parentNode, id, done) => {
+    //     for (const child of parentNode.children) {
+    //         if (child.id == id) {
+    //             console.log("1 MARKED", id);
+    //             child.active = true;
+    //         } else {
+    //             child.active = false;
+    //             if (child.children.length > 0) child.toggled = true;
+    //         }
+    //         markSelected(child, id, false);
+    //     }
+    //     if (done) {
+    //         done(parentNode);
+    //     }
+    // };
 
     React.useEffect(() => {
         if (!state.sceneTree) return;
@@ -53,7 +72,8 @@ export default function Inspector() {
             });
         }
         node.active = true;
-        if (node.children) {
+        console.log("THIS", (window as any).THIRD_INSPECTOR_TOGGLER);
+        if (node.children && (window as any).THIRD_INSPECTOR_TOGGLER == "togglebutton") {
             node.toggled = toggled;
         }
         setCursor(node);

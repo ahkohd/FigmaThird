@@ -20,6 +20,8 @@ const Toggle = ({ style, onClick, node }) => {
             style={style.base}
             onClick={event => {
                 event.stopPropagation();
+                // a hack, see ui.tsx
+                (window as any).THIRD_INSPECTOR_TOGGLER = "togglebutton";
                 onClick();
             }}>
             <Div style={style.wrapper}>
