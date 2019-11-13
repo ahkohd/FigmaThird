@@ -23,8 +23,8 @@ const style = {
                 border: '1px solid transparent'
             },
             activeLink: {
-                background: 'transparent',
-                border: '1px solid #1dcaff'
+                background: '#D6EBF8',
+                border: '1px solid #D6EBF8'
             },
             toggle: {
                 base: {

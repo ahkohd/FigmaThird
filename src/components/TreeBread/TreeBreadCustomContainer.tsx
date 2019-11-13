@@ -24,7 +24,7 @@ function Container(props) {
 
     return (
         <div
-            className="NodeContainer"
+            className={node.active ? "NodeContainer--active" : "NodeContainer"}
             style={node.active ? { ...style.container } : { ...style.link }}>
             {!terminal ? renderToggle() : null}
             <decorators.Header

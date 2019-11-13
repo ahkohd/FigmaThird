@@ -253,7 +253,7 @@ light__textInput--faint {
 .TreeHeader:hover .r {
     visibility: visible;
 }
-/* 
-.NodeContainer {
-    border-right: 0 !important;
-} */
+
+.NodeContainer:hover {
+    border: 1px solid #1dcaff !important;
+}
