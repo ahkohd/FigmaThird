@@ -234,3 +234,22 @@ light__textInput--faint {
     align-items: center;
     justify-content: flex-end;
 }
+
+.TreeHeader .r {
+    visibility: hidden;
+    transform: scale(0.9) !important;
+}
+
+.TreeHeader .l {
+    width: 75% !important;
+}
+.TreeHeader .l div {
+    transform: scale(0.9) !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.TreeHeader:hover .r {
+    visibility: visible;
+}

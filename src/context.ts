@@ -17,6 +17,8 @@ const AppContext = createContext({
     viewportSelectedItemID: null,
     hideItemDelete: null,
     hideItemValue: null,
+    shadowCItemValue: null,
+    shadowRItemValue: null,
     transformControlPivot: null,
     lightsInScene: [],
     updateLightData: null,

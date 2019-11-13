@@ -11,8 +11,6 @@ export const Div = styled("div", {
 })(({ style }: any) => style);
 
 const Toggle = ({ style, onClick, node }) => {
-    const { state, dispatch }: any = React.useContext(AppContext);
-
     const { height, width } = style;
     const midHeight = height * 0.5;
     const points = `0,0 0,${height} ${width},${midHeight}`;

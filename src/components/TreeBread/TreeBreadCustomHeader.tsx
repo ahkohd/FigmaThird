@@ -1,9 +1,10 @@
 import * as React from "react";
-import { Icon, IconButton } from "figma-styled-components";
+import { Icon, IconButton, Text, Label } from "figma-styled-components";
 import AppContext from "../../context";
+import styled from "styled-components";
 
 export default function Header({ onClick, style, customStyles, node }) {
-    const { state, dispatch }: any = React.useContext(AppContext);
+    const { dispatch }: any = React.useContext(AppContext);
 
     const iconType = node.children && node.children.length == 0 ? "Component" : "Frame";
     const extraStyle = {
@@ -18,6 +19,12 @@ export default function Header({ onClick, style, customStyles, node }) {
         alignItems: "center"
     };
 
+    const LiteLabel = styled.span`
+        background: transparent;
+        color: #999;
+        font-family: "Inter", sans-serif;
+    `;
+
     return (
         <div
             style={{ ...style.base, width: "70%" }}
@@ -27,7 +34,8 @@ export default function Header({ onClick, style, customStyles, node }) {
                     payload: { node, timestamp: new Date().getMilliseconds() }
                 });
                 onClick(event);
-            }}>
+            }}
+            className="TreeHeader">
             <div
                 style={
                     node.selected
@@ -57,9 +65,61 @@ export default function Header({ onClick, style, customStyles, node }) {
                         top: "0px",
                         right: "5px"
                     }}>
+                    {node.receiveShadow != null && (
+                        <div
+                            style={{ color: "#555" }}
+                            onClick={event => {
+                                event.stopPropagation();
+                                node.receiveShadow = !node.receiveShadow;
+                                dispatch({
+                                    type: "SET_ITEM_RSHADOW",
+                                    payload: {
+                                        id: node.id,
+                                        timestamp: new Date().getMilliseconds()
+                                    }
+                                });
+                            }}>
+                            <IconButton
+                                icon={
+                                    node.receiveShadow ? (
+                                        node.receiveShadow && <Text>R</Text>
+                                    ) : (
+                                        <LiteLabel>R</LiteLabel>
+                                    )
+                                }
+                            />
+                        </div>
+                    )}
+                    {node.castShadow != null && (
+                        <div
+                            style={{ color: "#555" }}
+                            onClick={event => {
+                                event.stopPropagation();
+                                node.castShadow = !node.castShadow;
+                                dispatch({
+                                    type: "SET_ITEM_CSHADOW",
+                                    payload: {
+                                        id: node.id,
+                                        timestamp: new Date().getMilliseconds()
+                                    }
+                                });
+                            }}>
+                            <IconButton
+                                icon={
+                                    node.castShadow ? (
+                                        node.castShadow && <Text> C</Text>
+                                    ) : (
+                                        <LiteLabel>C</LiteLabel>
+                                    )
+                                }
+                            />
+                        </div>
+                    )}
+
                     <div
                         style={{ color: "#555" }}
-                        onClick={() => {
+                        onClick={event => {
+                            event.stopPropagation();
                             node.visible = !node.visible;
                             dispatch({
                                 type: "SET_ITEM_FOR_HIDE",
@@ -76,6 +136,7 @@ export default function Header({ onClick, style, customStyles, node }) {
                         <IconButton
                             icon={<Icon name="Trash" />}
                             onClick={() => {
+                                event.stopPropagation();
                                 dispatch({
                                     type: "SET_ITEM_FOR_DELETE",
                                     payload: {

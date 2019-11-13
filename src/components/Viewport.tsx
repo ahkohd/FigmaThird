@@ -72,6 +72,18 @@ export default function Viewport(props) {
         handleItemHideToggle(parseInt(state.hideItemValue.id));
     }, [state.hideItemValue]);
 
+    // Watch for 3d obj to cast shadow click ..
+    React.useEffect(() => {
+        if (!state.shadowCItemValue) return;
+        handleShadowToggle(parseInt(state.shadowCItemValue.id), true);
+    }, [state.shadowCItemValue]);
+
+    // Watch for 3d obj to recive shadow click ..
+    React.useEffect(() => {
+        if (!state.shadowRItemValue) return;
+        handleShadowToggle(parseInt(state.shadowRItemValue.id));
+    }, [state.shadowRItemValue]);
+
     // Watch for 3d obj to delete.
     React.useEffect(() => {
         if (!state.hideItemDelete) return;
@@ -973,6 +985,26 @@ export default function Viewport(props) {
     const handleItemHideToggle = id => {
         const item = scene.getObjectById(id);
         item.visible = !item.visible;
+        updateScene();
+    };
+
+    const handleShadowToggle = (id, cast = false) => {
+        const item = scene.getObjectById(id);
+        if (cast) {
+            if (item.hasOwnProperty("castShadow")) item.castShadow = !item.castShadow;
+            if (item.hasOwnProperty("traverse"))
+                item.traverse(eachItem => {
+                    if (eachItem.hasOwnProperty("castShadow"))
+                        eachItem.castShadow = item.castShadow;
+                });
+        } else {
+            if (item.hasOwnProperty("receiveShadow")) item.receiveShadow = !item.receiveShadow;
+            if (item.hasOwnProperty("traverse"))
+                item.traverse(eachItem => {
+                    if (eachItem.hasOwnProperty("receiveShadow"))
+                        eachItem.receiveShadow = item.receiveShadow;
+                });
+        }
         updateScene();
     };
 

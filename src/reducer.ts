@@ -58,6 +58,16 @@ export default function reducer(state, { type, payload = null }) {
         ...state,
         hideItemValue: payload,
       };
+    case "SET_ITEM_CSHADOW":
+      return {
+        ...state,
+        shadowCItemValue: payload,
+      };
+    case "SET_ITEM_RSHADOW":
+      return {
+        ...state,
+        shadowRItemValue: payload,
+      };
     case "SET_ITEM_FOR_DELETE":
       return {
         ...state,
