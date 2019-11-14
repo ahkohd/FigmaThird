@@ -1,4 +1,4 @@
-// App store
+// Global App state 
 import { createContext } from 'react';
 
 const AppContext = createContext({

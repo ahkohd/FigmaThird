@@ -1,3 +1,6 @@
+/**
+ * Style object for [react-treebread](https://github.com/storybookjs/react-treebeard#style)
+ */
 const style = {
     tree: {
         base: {

@@ -2,17 +2,14 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import AppContext from "./context";
 import reducer from "./reducer";
+import setupAddons from "./utils/window-addons";
 import "./ui.css";
 
 import Viewport from "./components/ViewPort";
 import Shelf from "./components/Shelf";
-// a hack...
-(window as any).THIRD_INSPECTOR_TOGGLER = null;
-declare function require(path: string): any;
 
-(window as any).third_alert = message => {
-    parent.postMessage({ pluginMessage: { type: "alert", message } }, "*");
-};
+// Set up window addons
+setupAddons();
 
 const App = () => {
     const initialState = React.useContext(AppContext);

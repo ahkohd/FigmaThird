@@ -64,8 +64,6 @@ export async function encode(blob) {
     })
 }
 
-
-
 // Decoding an image can be done by sticking it in an HTML
 // canvas, as we can read individual pixels off the canvas.
 async function decode(canvas, ctx, bytes) {
@@ -83,6 +81,11 @@ async function decode(canvas, ctx, bytes) {
     return imageData
 }
 
+
+/**
+ * Add a new image fill to the currently selected figma object
+ * @param imageBytes Image to add as a new image fill
+ */
 export function applySnapshotToSelectedFigmaObject(imageBytes) {
     const currentSelections = getCurrentSelections();
 

@@ -1,3 +1,4 @@
+// Global App reducer
 export default function reducer(state, { type, payload = null }) {
   switch (type) {
     case "LOADING_MODEL":
