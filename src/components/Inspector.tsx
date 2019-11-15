@@ -6,7 +6,7 @@ import Header, { traverseNode } from "./TreeBread/TreeBreadCustomHeader";
 import Container from "./TreeBread/TreeBreadCustomContainer";
 import Toggle from "./TreeBread/TreeBreadCustomToggle";
 
-import useViewportItemSelected from "../hooks/viewportItemSelected";
+import useViewportItemSelectedEffect from "../hooks/viewportItemSelectedEffect";
 import Tree from "../utils/Tree";
 
 export default function Inspector() {
@@ -15,7 +15,7 @@ export default function Inspector() {
     const [data, setData] = React.useState(state.sceneTree);
     const [cursor, setCursor]: any = React.useState(false);
 
-    useViewportItemSelected(state, data, setData);
+    useViewportItemSelectedEffect(state, data, setData);
 
     // Effect when `sceneTree` data changes
     React.useEffect(() => {

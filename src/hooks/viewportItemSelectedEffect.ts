@@ -31,8 +31,14 @@ const markSelected = (parentNode: Tree, id: number, done: any, marked: boolean =
     }
 };
 
+/**
+ * Effects when `globalState.viewPortSelectedItem` state changes.
+ * @param globalState global app state. 
+ * @param localData inspector's local data state.
+ * @param setLocalData  set function for inspector's local data state./
+ */
 
-export default function useViewportItemSelected(globalState, localData, setLocalData) {
+export default function useViewportItemSelectedEffect(globalState, localData, setLocalData) {
     React.useEffect(() => {
         if (globalState.viewPortSelectedItem != null) {
             console.log("VIEWPORT SELECTED", globalState.viewPortSelectedItem);
