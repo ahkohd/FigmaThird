@@ -7,7 +7,6 @@ figma.showUI(__html__, {
 });
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this
-
 figma.ui.onmessage = msg => {
   // Distinguishing between different types of messages sent from the UI
 

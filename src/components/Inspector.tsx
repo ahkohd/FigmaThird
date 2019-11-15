@@ -6,55 +6,14 @@ import Header, { traverseNode } from "./TreeBread/TreeBreadCustomHeader";
 import Container from "./TreeBread/TreeBreadCustomContainer";
 import Toggle from "./TreeBread/TreeBreadCustomToggle";
 
+import useViewportItemSelected from "../hooks/viewportItemSelected";
+
 export default function Inspector() {
-    const { state, dispatch }: any = React.useContext(AppContext);
+    const { state }: any = React.useContext(AppContext);
     const [data, setData] = React.useState(state.sceneTree);
     const [cursor, setCursor]: any = React.useState(false);
 
-    React.useEffect(() => {
-        if (state.viewPortSelectedItem != null) {
-            console.log("VIEWPORT SELECTED", state.viewPortSelectedItem);
-            markSelected({ ...data }, state.viewPortSelectedItem.id, newData => {
-                console.log("2 set new data", newData);
-                setData(newData);
-            });
-        }
-    }, [state.viewPortSelectedItem]);
-
-    const markSelected = (parentNode, id, done, marked = false) => {
-        for (const child of parentNode.children) {
-            if (child.id == id) {
-                console.log("1 MARKED @{SELECTED}", id);
-                child.active = true;
-                marked = true;
-                markSelected(child, id, false, true);
-            } else {
-                child.active = false;
-                if (child.children.length > 0 && marked == false) child.toggled = true;
-                markSelected(child, id, false);
-            }
-        }
-        if (done) {
-            done(parentNode);
-        }
-    };
-
-    // formal marked that opens other groups when another stuff is selected
-    // const markSelected = (parentNode, id, done) => {
-    //     for (const child of parentNode.children) {
-    //         if (child.id == id) {
-    //             console.log("1 MARKED", id);
-    //             child.active = true;
-    //         } else {
-    //             child.active = false;
-    //             if (child.children.length > 0) child.toggled = true;
-    //         }
-    //         markSelected(child, id, false);
-    //     }
-    //     if (done) {
-    //         done(parentNode);
-    //     }
-    // };
+    useViewportItemSelected(state, data, setData);
 
     React.useEffect(() => {
         if (!state.sceneTree) return;

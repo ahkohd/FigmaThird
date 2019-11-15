@@ -7,66 +7,74 @@ export default class Tree {
 
     /**
      * Array of child nodes.
-     * @member {Array<Tree>} children 
+     * @member children 
      */
     public children: Array<Tree> = new Array<Tree>();
 
     /**
      * Data payload
-     * @member {any} data
+     * @member data
      */
     public data: any;
 
     /**
      * Toggled flag. Sets the visibility of a node's children. It also sets the state for the toggle decorator.
      * [See react-tree-bread](https://github.com/storybookjs/react-treebeard#toggled)
-     * @member {boolean} toggled
+     * @member toggled
      */
     public toggled: boolean;
 
     /**
      * Name of the node. 
-     * @member {string} name
+     * @member name
      */
     public name: string;
 
     /**
      * ThreeJS object ID of the node in scene.
      * [See Object3D.id](https://threejs.org/docs/index.html#api/en/core/Object3D.id)
-     * @member {number} id
+     * @member id
      */
     public id: number;
 
     /**
      * Constructor name of object in ThreeJS scene.
-     * @member {string} type Constructor name.
+     * @member type Constructor name.
      */
     public type: string;
 
     /**
      * Visibility of the object in ThreeJS scene.
      * [See Object3D.visible](https://threejs.org/docs/index.html#api/en/core/Object3D.visible)
-     * @member {boolean} visible 
+     * @member visible 
      */
     public visible: boolean = true;
 
     /**
      * Cast shadow property of object in ThreeJS Scene.
      * [See Object3D.castShadow](https://threejs.org/docs/index.html#api/en/core/Object3D.castShadow)
-     * @member {boolean} castShadow
+     * @member castShadow
      */
     public castShadow: boolean;
 
     /**
      * Receive shadow property of object in ThreeJS Scene.
      * [See Object3D.receiveShadow](https://threejs.org/docs/index.html#api/en/core/Object3D.receiveShadow)
-     * @member {boolean} receiveShadow
+     * @member receiveShadow
      */
     public receiveShadow: boolean;
 
-
+    /**
+     * Active flag. If active, the node will be highlighted. The highlight is derived from the `node.activeLink` style object in the theme.
+     * [See react-tree-bread](https://github.com/storybookjs/react-treebeard#active)
+     * @member active
+     */
     public active: boolean = false;
 
+    /**
+     * Tree constructor
+     * @param {Tree | null} parent Parent node, if null the node is the root of the tree.
+     */
     constructor(public parent: Tree | null) { }
 
     /**
