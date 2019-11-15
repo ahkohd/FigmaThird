@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Icon, IconButton, Text, Label } from "figma-styled-components";
+import { Icon, IconButton, Text } from "figma-styled-components";
 import AppContext from "../../context";
 import styled from "styled-components";
 

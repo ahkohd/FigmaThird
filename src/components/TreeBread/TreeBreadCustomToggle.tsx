@@ -1,6 +1,5 @@
 import * as React from "react";
 import styled from "@emotion/styled";
-import AppContext from "../../context";
 
 const Polygon = styled("polygon", {
     shouldForwardProp: prop => ["className", "children", "points"].indexOf(prop) !== -1
