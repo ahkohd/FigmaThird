@@ -17,6 +17,7 @@ export default function Inspector() {
 
     useViewportItemSelected(state, data, setData);
 
+    // Effect when `sceneTree` data changes
     React.useEffect(() => {
         if (!state.sceneTree) return;
         setData(state.sceneTree);
