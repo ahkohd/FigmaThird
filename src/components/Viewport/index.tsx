@@ -527,7 +527,6 @@ export default function Viewport(props) {
                 traverseAndGetData(childTree, childNode);
             }
         }
-
         return parent;
     };
 

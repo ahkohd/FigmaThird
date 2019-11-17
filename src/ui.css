@@ -250,7 +250,7 @@ light__textInput--faint {
     overflow: hidden;
 }
 
-.TreeHeader:hover .r {
+.NodeContainer:hover .r {
     visibility: visible;
 }
 

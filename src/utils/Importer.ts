@@ -27,8 +27,7 @@ export function fitCameraToSelection(
     const center = box.getCenter(new THREE.Vector3());
 
     const maxSize = Math.max(size.x, size.y, size.z);
-    const fitHeightDistance =
-        maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360));
+    const fitHeightDistance = maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360));
     const fitWidthDistance = fitHeightDistance / camera.aspect;
     const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
 
@@ -48,7 +47,7 @@ export function fitCameraToSelection(
     camera.position.copy(controls.target).sub(direction);
 
     controls.update();
-};
+}
 
 /**
  * Converts Model and Textures file list into Blob
@@ -58,7 +57,7 @@ export function fitCameraToSelection(
  */
 
 function mapInputToBlobList(modelFiles: FileList[], textures: FileList) {
-    const blobs = {}
+    const blobs = {};
     for (const model of modelFiles) {
         if (!model) continue;
         blobs[model[0].name] = model[0];
@@ -88,11 +87,11 @@ export async function importOBJ(obj: FileList, mtl: FileList, textures: FileList
         const objectURLs = [];
         manager.setURLModifier((url: string) => {
             try {
-                let out = URL.createObjectURL(blobs[url.replace(/^.*[\\\/]/, '')]);
+                let out = URL.createObjectURL(blobs[url.replace(/^.*[\\\/]/, "")]);
                 objectURLs.push(out);
                 return out;
             } catch (e) {
-                onerror(e, 'texture')
+                onerror(e, "texture");
             }
         });
 
@@ -101,23 +100,28 @@ export async function importOBJ(obj: FileList, mtl: FileList, textures: FileList
 
         const loadOBJ = async (callback, materials?) => {
             if (materials) loaderOBJ.setMaterials(materials);
-            loaderOBJ.load(obj[0].name, (model) => {
+            loaderOBJ.load(obj[0].name, model => {
+                // set model name
+                model.name = obj[0].name
+                    .split(".")
+                    .slice(0, -1)
+                    .join(".");
+
                 enableShadowAndLightOnModel(model);
                 callback(model);
-                objectURLs.forEach((url) => URL.revokeObjectURL(url));
+                objectURLs.forEach(url => URL.revokeObjectURL(url));
             });
-        }
+        };
         // try load mtl ...
         if (mtl) {
             loaderMTL.load(mtl[0].name, async materials => {
                 // our material is ready
                 materials.preload();
-                loadOBJ(cb, materials)
+                loadOBJ(cb, materials);
             });
         } else {
             loadOBJ(cb);
         }
-
     } catch (e) {
         onerror(e);
     }
@@ -125,11 +129,11 @@ export async function importOBJ(obj: FileList, mtl: FileList, textures: FileList
 
 /**
  * Imports GLB/GLTF models into scene.
- * @param {FileList} glb 
- * @param {FileList} bin 
- * @param {FileList} textures 
- * @param cb 
- * @param onerror 
+ * @param {FileList} glb
+ * @param {FileList} bin
+ * @param {FileList} textures
+ * @param cb
+ * @param onerror
  */
 
 export async function importGLB(glb: FileList, bin: FileList, textures: FileList, cb, onerror) {
@@ -139,72 +143,79 @@ export async function importGLB(glb: FileList, bin: FileList, textures: FileList
         const objectURLs = [];
         manager.setURLModifier((url: string) => {
             try {
-                let out = URL.createObjectURL(blobs[url.replace(/^.*[\\\/]/, '')]);
+                let out = URL.createObjectURL(blobs[url.replace(/^.*[\\\/]/, "")]);
                 objectURLs.push(out);
                 return out;
             } catch (e) {
-                console.log(e)
-                onerror(e, 'texture')
+                console.log(e);
+                onerror(e, "texture");
             }
         });
         const loaderGLTF = new GLTFLoader(manager);
-        loaderGLTF.load(glb[0].name, (model) => {
-            enableShadowAndLightOnModel(model, 'gltf');
+        loaderGLTF.load(glb[0].name, model => {
+            enableShadowAndLightOnModel(model, "gltf");
             cb(model);
-            objectURLs.forEach((url) => URL.revokeObjectURL(url));
+            objectURLs.forEach(url => URL.revokeObjectURL(url));
         });
     } catch (e) {
-        console.log(e)
+        console.log(e);
         onerror(e);
     }
 }
 
 /**
  * Imports FBX models into scene.
- * @param {FileList} fbx 
- * @param {FileList} textures 
- * @param cb 
- * @param onerror 
+ * @param {FileList} fbx
+ * @param {FileList} textures
+ * @param cb
+ * @param onerror
  */
 
 export async function importFBX(fbx: FileList, textures: FileList, cb, onerror) {
     try {
         if (textures) {
             const blobs = mapInputToBlobList([fbx], textures);
-            console.log("FBX", blobs)
+            console.log("FBX", blobs);
             const manager = new THREE.LoadingManager();
             const objectURLs = [];
             manager.setURLModifier((url: string) => {
                 try {
-                    let out = URL.createObjectURL(blobs[url.replace(/^.*[\\\/]/, '')]);
+                    let out = URL.createObjectURL(blobs[url.replace(/^.*[\\\/]/, "")]);
                     objectURLs.push(out);
                     return out;
                 } catch (e) {
-                    console.log(e)
-                    onerror(e, 'texture')
+                    console.log(e);
+                    onerror(e, "texture");
                 }
             });
             const loaderFBX = new FBXLoader(manager);
-            loaderFBX.load(fbx[0].name, (model) => {
-                enableShadowAndLightOnModel(model);
-                cb(model);
-                objectURLs.forEach((url) => URL.revokeObjectURL(url));
-            }, (err) => {
-                onerror(err);
-            });
+            loaderFBX.load(
+                fbx[0].name,
+                model => {
+                    enableShadowAndLightOnModel(model);
+                    cb(model);
+                    objectURLs.forEach(url => URL.revokeObjectURL(url));
+                },
+                err => {
+                    onerror(err);
+                }
+            );
         } else {
             const loaderFBX = new FBXLoader();
             const fbx_uri: string = URL.createObjectURL(fbx[0]);
-            loaderFBX.load(fbx_uri, (model) => {
+            loaderFBX.load(fbx_uri, model => {
+                // set model name
+                model.name = fbx[0].name
+                    .split(".")
+                    .slice(0, -1)
+                    .join(".");
                 enableShadowAndLightOnModel(model);
                 cb(model);
                 URL.revokeObjectURL(fbx_uri);
-            })
+            });
         }
-
-
     } catch (e) {
-        console.log(e)
+        console.log(e);
         onerror(e);
     }
 }
@@ -216,15 +227,14 @@ export async function importFBX(fbx: FileList, textures: FileList, cb, onerror) 
  */
 
 export default function enableShadowAndLightOnModel(importedModel: any, type?: string) {
-    const enableShadows = (type == 'gltf') ? importedModel.scene : importedModel;
-    enableShadows.traverse(function (child) {
+    const enableShadows = type == "gltf" ? importedModel.scene : importedModel;
+    enableShadows.traverse(function(child) {
         if ((child as any).isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
         }
     });
 }
-
 
 /**
  * Reads File and converts its content into a DataURL
@@ -244,4 +254,4 @@ export function readUploadedFileAsURL(inputFile: File) {
         };
         temporaryFileReader.readAsDataURL(inputFile);
     });
-};
+}

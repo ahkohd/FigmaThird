@@ -32,9 +32,10 @@ export default function Inspector() {
      */
 
     const onToggle = (node: Tree, toggled: boolean) => {
+        const _data = { ...data };
         if (cursor) {
             cursor.active = false;
-            traverseNode(data.children, childNode => {
+            traverseNode(_data.children, childNode => {
                 if (childNode.id != cursor.id) {
                     childNode.active = false;
                 }
@@ -46,7 +47,7 @@ export default function Inspector() {
             node.toggled = toggled;
         }
         setCursor(node);
-        setData(Object.assign({}, data));
+        setData(Object.assign({}, _data));
     };
 
     /**
