@@ -22,6 +22,12 @@ import {
     addAmbLight
 } from "./light-utils";
 import { loadGLTF, loadOBJ, loadFBX } from "./load-utils";
+import createMeshes, { addGround, addGrid } from "./object-utils";
+import {
+    onMouseDown,
+    cleanupKeyAndMouseEventListeners,
+    setupKeyAndMouseEventListeners
+} from "./keybinds-utils";
 
 // ThreeJS specific vars.
 let scene;
@@ -42,6 +48,7 @@ let onUpPosition = new THREE.Vector2();
 let onDoubleClickPosition = new THREE.Vector2();
 let objectsForSelection: any[] = [];
 
+// Viewport component
 export default function Viewport(props) {
     const { state, dispatch }: any = React.useContext(AppContext);
 
@@ -51,17 +58,26 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
         init();
-        window.addEventListener("keydown", handleUserKeyDownInput);
-        window.addEventListener("keyup", handleUserKeyUpInput);
-
-        // object selection listners
-        port.addEventListener("mousedown", onMouseDown, false);
-        port.addEventListener("dblclick", onDoubleClick, false);
-
+        setupKeyAndMouseEventListeners({
+            transformControl,
+            getMousePosition,
+            port,
+            onDownPosition,
+            onMouseUp,
+            onDoubleClickPosition,
+            getAllObjects,
+            getIntersects,
+            setObjectAsPivotPoint
+        });
         return () => {
-            window.removeEventListener("keydown", handleUserKeyDownInput);
-            window.removeEventListener("keyup", handleUserKeyUpInput);
-            port.removeEventListener("mousedown", onMouseDown, false);
+            cleanupKeyAndMouseEventListeners({
+                transformControl,
+                getMousePosition,
+                port,
+                onDownPosition,
+                onMouseDown,
+                onMouseUp
+            });
         };
     }, []);
 
@@ -135,7 +151,7 @@ export default function Viewport(props) {
         RectAreaLightUniformsLib.init();
         transformControl = useTransformControl(orbitControl, camera, port, updateScene);
         setupViewportEnvironment();
-        createMeshes();
+        createMeshes({ track, addObjectToScene, transformControl });
         sceneFog = useFog(scene, updateScene);
         scene.add(transformControl);
         renderer.setAnimationLoop(updateScene);
@@ -254,112 +270,13 @@ export default function Viewport(props) {
             1
         );
         addDirLight({ scene, track, dispatch }, [new THREE.Color(0xffffff)], 1.5);
-        addGround();
-        addGrid();
-    };
-
-    const createMeshes = () => {
-        // Create cube and add to scene.
-        let material = new THREE.MeshStandardMaterial({
-            color: 0x00ff00
-        });
-        let geometry = new THREE.BoxGeometry(20, 20, 20);
-        let mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(0, 10, 0);
-        mesh.castShadow = true;
-        mesh.name = "Cube";
-        transformControl.attach(mesh);
-        addObjectToScene(mesh);
-    };
-
-    const addGround = () => {
-        // ground
-        let mesh = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(1000, 1000, 100, 100),
-            new THREE.MeshPhongMaterial({
-                color: 0xffffff,
-                depthWrite: false
-            })
-        );
-        mesh.rotation.x = -Math.PI / 2;
-        mesh.receiveShadow = true;
-        mesh.name = "ground";
-        objectsForSelection.push(mesh);
-        scene.add(mesh);
-    };
-
-    const addGrid = () => {
-        grid = new THREE.GridHelper(1000, 50, 0x000000, 0x000000);
-        (grid.material as any).opacity = 0.2;
-        (grid.material as any).transparent = true;
-        grid.name = "grid";
-        // fitCameraToSelection(camera, orbitControl, [grid], 0.1);
-        scene.add(grid);
+        addGround({ track, objectsForSelection, scene });
+        grid = addGrid({ track, scene });
     };
 
     const handleGridToggle = toggle => {
         grid.visible = toggle;
         updateScene();
-    };
-
-    const handleUserKeyDownInput = event => {
-        switch (event.keyCode) {
-            case 81: // Q
-                transformControl.setSpace(transformControl.space === "local" ? "world" : "local");
-                break;
-
-            case 17: // Ctrl
-                transformControl.setTranslationSnap(100);
-                transformControl.setRotationSnap(THREE.Math.degToRad(15));
-                break;
-
-            case 87: // W
-                transformControl.setMode("translate");
-                break;
-
-            case 69: // E
-                transformControl.setMode("rotate");
-                break;
-
-            case 82: // R
-                transformControl.setMode("scale");
-                break;
-
-            case 187:
-            case 107: // +, =, num+
-                transformControl.setSize(transformControl.size + 0.1);
-                break;
-
-            case 189:
-            case 109: // -, _, num-
-                transformControl.setSize(Math.max(transformControl.size - 0.1, 0.1));
-                break;
-
-            case 88: // X
-                transformControl.showX = !transformControl.showX;
-                break;
-
-            case 89: // Y
-                transformControl.showY = !transformControl.showY;
-                break;
-
-            case 90: // Z
-                transformControl.showZ = !transformControl.showZ;
-                break;
-
-            case 32: // Spacebar
-                transformControl.enabled = !transformControl.enabled;
-                break;
-        }
-    };
-
-    const handleUserKeyUpInput = event => {
-        switch (event.keyCode) {
-            case 17: // Ctrl
-                transformControl.setTranslationSnap(null);
-                transformControl.setRotationSnap(null);
-                break;
-        }
     };
 
     const removeItemFromScene = id => {
@@ -508,14 +425,6 @@ export default function Viewport(props) {
         return [(x - rect.left) / rect.width, (y - rect.top) / rect.height];
     };
 
-    const onMouseDown = event => {
-        event.preventDefault();
-        const array = getMousePosition(port, event.clientX, event.clientY);
-        onDownPosition.fromArray(array);
-        console.log(1, "DOWN_POS", onDownPosition);
-        document.addEventListener("mouseup", onMouseUp, false);
-    };
-
     const onMouseUp = event => {
         const array = getMousePosition(port, event.clientX, event.clientY);
         onUpPosition.fromArray(array);
@@ -546,19 +455,6 @@ export default function Viewport(props) {
         }
     };
 
-    const onDoubleClick = event => {
-        const array = getMousePosition(port, event.clientX, event.clientY);
-        onDoubleClickPosition.fromArray(array);
-
-        const intersects = getIntersects(onDoubleClickPosition, getAllObjects());
-
-        if (intersects.length > 0) {
-            const intersect = intersects[0];
-
-            setObjectAsPivotPoint(intersect.object);
-        }
-    };
-
     const attachObjectToTransformControl = (object, viewport = true) => {
         if (object.name == "grid") return;
         transformControl.detach();
@@ -566,7 +462,6 @@ export default function Viewport(props) {
         selectedID = object.id;
         if (viewport) {
             console.log("NOT Viewport");
-
             dispatch({
                 type: "SET_VIEWPORT_SELECTED_ITEM",
                 payload: { id: selectedID, _t: new Date().getTime() }

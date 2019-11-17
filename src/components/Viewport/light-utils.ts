@@ -215,12 +215,10 @@ export function addRectLight(
 
     let rectLightMesh = track(
         new Mesh(
-            track(new PlaneBufferGeometry()),
-            track(
-                new MeshBasicMaterial({
-                    side: BackSide
-                })
-            )
+            new PlaneBufferGeometry(),
+            new MeshBasicMaterial({
+                side: BackSide
+            })
         )
     );
     rectLightMesh.scale.x = rectLight.width;
@@ -230,10 +228,7 @@ export function addRectLight(
     (rectLightMesh.material as any).color.copy(rectLight.color).multiplyScalar(rectLight.intensity);
 
     let rectLightMeshBack = track(
-        new Mesh(
-            track(new PlaneBufferGeometry()),
-            track(new MeshBasicMaterial({ color: 0x080808 }))
-        )
+        new Mesh(new PlaneBufferGeometry(), new MeshBasicMaterial({ color: 0x080808 }))
     );
 
     rectLight.add(rectLightMesh);
