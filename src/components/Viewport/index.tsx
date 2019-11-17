@@ -1,25 +1,40 @@
 import * as React from "react";
-import AppContext from "../context";
+import AppContext from "../../context";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { TransformControls } from "three/examples/jsm/controls/TransformControls";
-import Tree from "../utils/Tree";
+import Tree from "../../utils/Tree";
 import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLightUniformsLib.js";
+import ResourceTracker from "../../utils/ResourceTracker";
+import Loader from "../Loader";
+import { encode } from "../../utils/utils";
+import { ILight } from "../../utils/ILight";
+import { useRenderer } from "../../hooks/three/renderer";
+import { useCamera } from "../../hooks/three/camera";
+import { useOrbitControl } from "../../hooks/three/orbitControl";
+import { useTransformControl } from "../../hooks/three/transformControl";
+import { useFog } from "../../hooks/three/fog";
+import { useStateChange } from "../../hooks/stateChange";
+import {
+    addHemiLight,
+    addDirLight,
+    addPointLight,
+    addRectLight,
+    addSpotLight,
+    addAmbLight
+} from "./light-utils";
+import { loadGLTF, loadOBJ, loadFBX } from "./load-utils";
 
-import Loader from "./Loader";
-import { encode } from "../utils/utils";
-import { importOBJ, importGLB, importFBX } from "../utils/Importer";
-import { Color } from "three";
-import { ILight } from "../utils/ILight";
-
+// ThreeJS specific vars.
 let scene;
 let camera;
 let orbitControl;
 let transformControl;
 let renderer;
 let grid;
+let sceneFog;
+let resourceTracker;
+let track;
 
-// Object selection vars
+// ThreeJS Object selection vars
 let raycaster = new THREE.Raycaster();
 let mouse = new THREE.Vector2();
 let onDownPosition = new THREE.Vector2();
@@ -50,341 +65,87 @@ export default function Viewport(props) {
         };
     }, []);
 
-    React.useEffect(() => {
-        // When Import model data state changed
-        handleModelImport();
-    }, [state.importData]);
+    // Import model data when importData state changes.
+    useStateChange(state.importData, () => handleModelImport());
 
-    React.useEffect(() => {
-        // React when use opens the inspector view ...
-        if (state.activeTab == "inspector") handleInspector();
-    }, [state.activeTab]);
+    // Effect when use opens the inspector view.
+    useStateChange(
+        state.activeTab,
+        ({ nextState }) => nextState == "inspector" && handleInspector()
+    );
 
-    // Watch for inspector selects an item
-    React.useEffect(() => {
-        if (!state.selectItemInTree) return;
-        handleUserSelectOnInspector(state.selectItemInTree.node);
-    }, [state.selectItemInTree]);
+    // Effect when user selects a node(item in list) at the inspector.
+    useStateChange(state.selectItemInTree, ({ nextState }) =>
+        handleUserSelectOnInspector(nextState.node)
+    );
 
-    // Watch for 3d obj to hide
-    React.useEffect(() => {
-        if (!state.hideItemValue) return;
-        handleItemHideToggle(parseInt(state.hideItemValue.id));
-    }, [state.hideItemValue]);
+    // Effect when user toggles hide button on an item at the inspector.
+    useStateChange(state.hideItemValue, ({ nextState }) =>
+        handleItemHideToggle(parseInt(nextState.id))
+    );
 
-    // Watch for 3d obj to cast shadow click ..
-    React.useEffect(() => {
-        if (!state.shadowCItemValue) return;
-        handleShadowToggle(parseInt(state.shadowCItemValue.id), true);
-    }, [state.shadowCItemValue]);
+    // Effect when user toggles cast shadow button on an item at the inspector.
+    useStateChange(state.shadowCItemValue, ({ nextState }) =>
+        handleShadowToggle(parseInt(nextState.id), true)
+    );
 
-    // Watch for 3d obj to recive shadow click ..
-    React.useEffect(() => {
-        if (!state.shadowRItemValue) return;
-        handleShadowToggle(parseInt(state.shadowRItemValue.id));
-    }, [state.shadowRItemValue]);
+    // Effect when user toggles recive shadow button on an item at the inspector.
+    useStateChange(state.shadowRItemValue, ({ nextState }) =>
+        handleShadowToggle(parseInt(nextState.id))
+    );
 
-    // Watch for 3d obj to delete.
-    React.useEffect(() => {
-        if (!state.hideItemDelete) return;
-        removeItemFromScene(state.hideItemDelete.id);
-    }, [state.hideItemDelete]);
+    // Effect when user clicks delete button on an item at the inspector.
+    useStateChange(state.hideItemDelete, ({ nextState }) => removeItemFromScene(nextState.id));
 
-    // Watch for when user triggers mode change ..
-    React.useEffect(() => {
-        if (!state.transformControlMode) return;
-        handleTransformControlMode(state.transformControlMode.type);
-    }, [state.transformControlMode]);
+    // Effect when user clicks translate mode change buttons.
+    useStateChange(state.transformControlMode, ({ nextState }) =>
+        handleTransformControlMode(nextState.type)
+    );
 
-    // Watch for when user requests to set current transform object as pivot
-    React.useEffect(() => {
-        if (!state.transformControlPivot) return;
-        handleTransformControlPivot();
-    }, [state.transformControlPivot]);
+    // Watch for when user requests to set current transform object as pivot.
+    useStateChange(state.transformControlPivot, () => handleTransformControlPivot());
 
-    // Effect on light color change
-    React.useEffect(() => {
-        if (!state.updateLightData) return;
-        handleLightDataChange(state.updateLightData);
-    }, [state.updateLightData]);
+    // Effect when user changes light color change.
+    useStateChange(state.updateLightData, ({ nextState }) => handleLightDataChange(nextState));
 
-    // Effect on request to add light
-    React.useEffect(() => {
-        if (!state.requestAddLight) return;
-        handleAddLight(state.requestAddLight);
-    }, [state.requestAddLight]);
+    // Effect when user clicks add light button.
+    useStateChange(state.requestAddLight, ({ nextState }) => handleAddLight(nextState));
 
-    // Effect when user changes fog data
-    React.useEffect(() => {
-        handleFogDataChange(state.fogData);
-        console.log("Fog Data");
-    }, [state.fogData]);
+    // Effect when user changes fog data.
+    useStateChange(state.fogData, ({ nextState }) => sceneFog.setFog(nextState));
 
+    // Effect when user toggles show grid check box at the inspector.
+    useStateChange(state.showGrid, ({ nextState }) => handleGridToggle(nextState));
+
+    // Effect when user clicks snap button.
+    useStateChange(state.snap, ({ nextState }) => snap(state.hideGroundOnSnap.value));
+
+    // Setup viewport ...
     const init = () => {
-        // Container
+        // Create a resource tracker.
+        resourceTracker = new ResourceTracker();
+        track = resourceTracker.track.bind(resourceTracker);
+        // Setup viewport.
         port = viewportRef.current;
         // Create scene.
         scene = new THREE.Scene();
-
-        createRenderer();
-        createCamera();
-        createOrbitControl();
+        renderer = useRenderer(port, [props.width, props.height]);
+        camera = useCamera([props.width, props.height]);
+        orbitControl = useOrbitControl(camera, port, updateScene);
         RectAreaLightUniformsLib.init();
-        setUpTransformControls();
-        setUpFogWhiteLightScene();
+        transformControl = useTransformControl(orbitControl, camera, port, updateScene);
+        setupViewportEnvironment();
         createMeshes();
-        createFog();
+        sceneFog = useFog(scene, updateScene);
         scene.add(transformControl);
         renderer.setAnimationLoop(updateScene);
     };
 
-    // Effect when user
-    React.useEffect(() => {
-        if (!grid) return;
-        handleGridToggle(state.showGrid);
-    }, [state.showGrid]);
-
-    // Effect on snap
-    React.useEffect(() => {
-        if (state.snap == null) return;
-        snap(state.hideGroundOnSnap.value);
-    }, [state.snap]);
-
+    /**
+     * updates THREE JS scene.
+     */
     const updateScene = () => {
         renderer.render(scene, camera);
-    };
-
-    const getThreeObjects = () => {
-        return { camera, scene, orbitControl };
-    };
-
-    const createCamera = () => {
-        // Create camera.
-        camera = new THREE.PerspectiveCamera(
-            35, // FOV
-            props.width / props.height, // aspect
-            0.1, // near clipping plane
-            10000 // far clipping plane
-        );
-        camera.position.set(10, 20, 30);
-    };
-
-    const createFog = () => {
-        const color = 0xffffff; // white
-        const near = 10;
-        const far = 100;
-        scene.fog = new THREE.Fog(color, near, far);
-    };
-
-    const handleFogDataChange = changedData => {
-        console.log(changedData);
-        if (!changedData.visible) {
-            scene.fog.near = 0.1;
-            scene.fog.far = 50000;
-            updateScene();
-            return;
-        }
-
-        scene.fog.color = new THREE.Color(
-            `rgb(${changedData.color.r * 255}, ${changedData.color.g * 255}, ${changedData.color.b *
-                255})`
-        );
-        scene.fog.far = changedData.far;
-        scene.fog.near = changedData.near;
-
-        updateScene();
-    };
-
-    const addHemiLight = (colors: THREE.Color[], intensity) => {
-        let light = new THREE.HemisphereLight(colors[0], colors[1], intensity);
-        let lightHelper = new THREE.HemisphereLightHelper(light, 5);
-        light.position.set(0, 20, 0);
-        scene.add(light);
-        scene.add(lightHelper);
-
-        let out: ILight = {
-            id: light.id,
-            color: [
-                light.skyColor || new Color(0xffffff),
-                light.groundColor || new Color(0xffffff)
-            ],
-            intensity: light.intensity,
-            type: "HemisphereLight",
-            helperId: lightHelper.id
-        };
-
-        dispatch({
-            type: "ADD_LIGHT_TO_SCENE",
-            payload: out
-        });
-    };
-
-    const addDirLight = (colors: THREE.Color[], intensity) => {
-        let light1 = new THREE.DirectionalLight(colors[0], intensity);
-        light1.position.set(0, 20, 0);
-        light1.castShadow = true;
-        light1.shadow.camera.top = 1000;
-        light1.shadow.camera.bottom = -1000;
-        light1.shadow.camera.left = -1000;
-        light1.shadow.camera.right = 1000;
-        light1.shadow.mapSize.width = 1024 * 5;
-        light1.shadow.mapSize.height = 1024 * 5;
-
-        const light1Helper = new THREE.DirectionalLightHelper(light1, 5);
-        scene.add(light1);
-        scene.add(light1Helper);
-
-        let out: ILight = {
-            id: light1.id,
-            color: [light1.color],
-            intensity: light1.intensity,
-            type: "DirectionalLight",
-            helperId: light1Helper.id
-        };
-
-        dispatch({
-            type: "ADD_LIGHT_TO_SCENE",
-            payload: out
-        });
-    };
-
-    const addAmbLight = (colors: THREE.Color[], intensity) => {
-        let light1 = new THREE.AmbientLight(colors[0], intensity);
-        light1.position.set(0, 0, 0);
-        scene.add(light1);
-
-        let out: ILight = {
-            id: light1.id,
-            color: [light1.color],
-            intensity: light1.intensity,
-            type: "AmbientLight"
-        };
-
-        dispatch({
-            type: "ADD_LIGHT_TO_SCENE",
-            payload: out
-        });
-    };
-
-    const addPointLight = (colors: THREE.Color[], intensity, distance) => {
-        let light1 = new THREE.PointLight(colors[0], intensity, distance);
-        light1.position.set(0, 50, 0);
-        light1.castShadow = true;
-        light1.decay = 1;
-        const light1Helper = new THREE.PointLightHelper(light1, 5);
-        scene.add(light1);
-        scene.add(light1Helper);
-
-        let out: ILight = {
-            id: light1.id,
-            color: [light1.color],
-            intensity: light1.intensity,
-            type: "PointLight",
-            helperId: light1Helper.id,
-            distance,
-            decay: 1
-        };
-
-        dispatch({
-            type: "ADD_LIGHT_TO_SCENE",
-            payload: out
-        });
-    };
-
-    const addSpotLight = (colors: THREE.Color[], intensity) => {
-        let light1 = new THREE.SpotLight(colors[0], intensity);
-        light1.position.set(0, 80, 0);
-        light1.angle = Math.PI / 3;
-        light1.penumbra = 1;
-        light1.decay = 1;
-        light1.distance = 200;
-        light1.castShadow = true;
-        light1.shadow.mapSize.width = 1024 * 5;
-        light1.shadow.mapSize.height = 1024 * 5;
-        const spotLightHelpers = new THREE.Group();
-        spotLightHelpers.name = "Spot Light Helpers";
-
-        const light1Helper = new THREE.SpotLightHelper(light1);
-        spotLightHelpers.add(light1Helper);
-        const shadowCameraHelper = new THREE.CameraHelper(light1.shadow.camera);
-        spotLightHelpers.add(shadowCameraHelper);
-        spotLightHelpers.add(new THREE.AxesHelper(10));
-        light1.add(spotLightHelpers);
-
-        scene.add(light1);
-
-        let out: ILight = {
-            id: light1.id,
-            color: colors,
-            intensity: intensity,
-            type: "SpotLight",
-            angle: Math.PI / 3,
-            decay: 2,
-            penumbra: 0.05,
-            distance: 10,
-            helperId: spotLightHelpers.id
-        };
-
-        dispatch({
-            type: "ADD_LIGHT_TO_SCENE",
-            payload: out
-        });
-    };
-
-    const addRectLight = (
-        colors: THREE.Color[],
-        intensity: number,
-        width: number,
-        height: number
-    ) => {
-        let lightGroup = new THREE.Group();
-        lightGroup.name = "RectAreaLightControl";
-
-        let rectLight = new THREE.RectAreaLight(colors[0], intensity, width, height);
-        rectLight.position.set(0, 20, 0);
-        rectLight.lookAt(0, 0, 0);
-
-        let rectLightMesh = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(),
-            new THREE.MeshBasicMaterial({
-                side: THREE.BackSide
-            })
-        );
-        rectLightMesh.scale.x = rectLight.width;
-        rectLightMesh.scale.y = rectLight.height;
-
-        rectLight.color.setRGB(colors[0].r, colors[0].g, colors[0].b);
-        (rectLightMesh.material as any).color
-            .copy(rectLight.color)
-            .multiplyScalar(rectLight.intensity);
-
-        let rectLightMeshBack = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(),
-            new THREE.MeshBasicMaterial({ color: 0x080808 })
-        );
-
-        rectLight.add(rectLightMesh);
-        rectLightMesh.add(rectLightMeshBack);
-
-        lightGroup.add(rectLight);
-        scene.add(lightGroup);
-
-        let out: ILight = {
-            id: lightGroup.id,
-            color: [colors[0]],
-            intensity: intensity,
-            type: "RectAreaLight",
-            width,
-            height,
-            helperId: rectLight.id,
-            lightMeshId: rectLightMesh.id,
-            lightBackMeshId: rectLightMeshBack.id
-        };
-
-        dispatch({
-            type: "ADD_LIGHT_TO_SCENE",
-            payload: out
-        });
     };
 
     const handleLightDataChange = (lightData: ILight) => {
@@ -466,50 +227,35 @@ export default function Viewport(props) {
     const handleAddLight = type => {
         switch (type.split("-")[0]) {
             case "HemisphereLight":
-                addHemiLight([new THREE.Color(), new THREE.Color()], 1);
+                addHemiLight({ scene, track, dispatch }, [new THREE.Color(), new THREE.Color()], 1);
                 break;
             case "DirectionalLight":
-                addDirLight([new THREE.Color()], 1);
+                addDirLight({ scene, track, dispatch }, [new THREE.Color()], 1);
                 break;
             case "PointLight":
-                addPointLight([new THREE.Color()], 20, 100);
+                addPointLight({ scene, track, dispatch }, [new THREE.Color()], 20, 100);
                 break;
             case "RectAreaLight":
-                addRectLight([new THREE.Color()], 1, 50, 50);
+                addRectLight({ scene, track, dispatch }, [new THREE.Color()], 1, 50, 50);
                 break;
             case "SpotLight":
-                addSpotLight([new THREE.Color()], 100);
+                addSpotLight({ scene, track, dispatch }, [new THREE.Color()], 100);
                 break;
             case "AmbientLight":
-                addAmbLight([new THREE.Color()], 1);
+                addAmbLight({ scene, track, dispatch }, [new THREE.Color()], 1);
                 break;
         }
     };
 
-    const setUpFogWhiteLightScene = () => {
-        addHemiLight([new THREE.Color(0xffffff), new THREE.Color(0x444444)], 1);
-        addDirLight([new THREE.Color(0xffffff)], 1.5);
+    const setupViewportEnvironment = () => {
+        addHemiLight(
+            { scene, track, dispatch },
+            [new THREE.Color(0xffffff), new THREE.Color(0x444444)],
+            1
+        );
+        addDirLight({ scene, track, dispatch }, [new THREE.Color(0xffffff)], 1.5);
         addGround();
         addGrid();
-    };
-
-    const setUpTransformControls = () => {
-        transformControl = new TransformControls(camera, port);
-        transformControl.addEventListener("change", updateScene);
-        transformControl.addEventListener("dragging-changed", function(event) {
-            orbitControl.enabled = !event.value;
-        });
-        // transformControl.addEventListener("mouseUp", function() {
-        //   const object = transformControl.object;
-
-        //   if (object !== undefined) {
-        //     switch (transformControl.getMode()) {
-        //       case "translate":
-
-        //         break;
-        //     }
-        //   }
-        // });
     };
 
     const createMeshes = () => {
@@ -554,30 +300,6 @@ export default function Viewport(props) {
     const handleGridToggle = toggle => {
         grid.visible = toggle;
         updateScene();
-    };
-
-    const createRenderer = () => {
-        // Renderer.
-        renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true
-        });
-        renderer.setSize(props.width, props.height);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.gammaFactor = 2.2;
-        renderer.gammaOutput = true;
-        renderer.physicallyCorrectLights = true;
-        renderer.shadowMap.enabled = true;
-        port.appendChild(renderer.domElement);
-        // Add renderer to page
-    };
-
-    const createOrbitControl = () => {
-        orbitControl = new OrbitControls(camera, port);
-        orbitControl.update();
-        orbitControl.addEventListener("change", updateScene);
-        orbitControl.maxDistance = 8000;
-        orbitControl.minDistance = 20;
     };
 
     const handleUserKeyDownInput = event => {
@@ -640,20 +362,6 @@ export default function Viewport(props) {
         }
     };
 
-    const clearMeshesFromScene = () => {
-        try {
-            console.log(scene);
-            // empty objects for selection ....
-            objectsForSelection = [];
-            scene.children.forEach(element => {
-                if (element instanceof THREE.Group) scene.remove(element);
-                if (element instanceof THREE.Mesh) scene.remove(element);
-            });
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
     const removeItemFromScene = id => {
         console.log("DELETE ID:", id);
         // remove from selectable objects ...
@@ -701,104 +409,46 @@ export default function Viewport(props) {
         switch (type) {
             case "glb":
             case "glb_tex":
-                loadGLTF({
-                    glb: data.glb,
-                    bin: data.bin,
-                    textures: data.textures
-                });
+                loadGLTF(
+                    { dispatch, addObjectToScene, transformControl },
+                    {
+                        glb: data.glb,
+                        bin: data.bin,
+                        textures: data.textures
+                    }
+                );
                 break;
             case "obj":
             case "obj_mtl":
-                loadOBJ({
-                    obj: data.obj,
-                    mtl: data.mtl,
-                    textures: data.textures
-                });
+                loadOBJ(
+                    { dispatch, addObjectToScene, transformControl },
+                    {
+                        obj: data.obj,
+                        mtl: data.mtl,
+                        textures: data.textures
+                    }
+                );
                 break;
             case "fbx":
-                loadFBX({
-                    fbx: data.fbx,
-                    textures: data.textures
-                });
+                loadFBX(
+                    { dispatch, addObjectToScene, transformControl },
+                    {
+                        fbx: data.fbx,
+                        textures: data.textures
+                    }
+                );
                 break;
         }
     };
 
-    const handle3dLoadErr = type => {
-        dispatch({ type: "DONE_LOADING_MODEL" });
-        (window as any).third_alert(
-            type == "texture"
-                ? "😞 Unable to load model, please provide all textures."
-                : "😢 An error occured while trying to load model!"
-        );
-    };
-
-    const loadGLTF = async blobs => {
-        // import GLTF File ...
-        importGLB(
-            blobs.glb,
-            blobs.bin,
-            blobs.textures,
-            glb => {
-                const { camera, scene, orbitControl } = getThreeObjects();
-                dispatch({ type: "DONE_LOADING_MODEL" });
-                // fitCameraToSelection(camera, orbitControl, [glb.scene]);
-                addObjectToScene(glb.scene, true);
-                transformControl.attach(glb.scene);
-            },
-            (err, type) => {
-                handle3dLoadErr(type);
-            }
-        );
-    };
-
-    const loadOBJ = async blobs => {
-        // import OBJ File ...
-        importOBJ(
-            blobs.obj,
-            blobs.mtl,
-            blobs.textures,
-            model => {
-                const { camera, scene, orbitControl } = getThreeObjects();
-                dispatch({ type: "DONE_LOADING_MODEL" });
-                // fitCameraToSelection(camera, orbitControl, [model]);
-                addObjectToScene(model, true);
-                transformControl.attach(model);
-            },
-            (err, type) => {
-                handle3dLoadErr(type);
-            }
-        );
-    };
-
-    const loadFBX = async blobs => {
-        // import FBX File ...
-        importFBX(
-            blobs.fbx,
-            blobs.textures,
-            fbx => {
-                const { camera, scene, orbitControl } = getThreeObjects();
-                dispatch({ type: "DONE_LOADING_MODEL" });
-                // fitCameraToSelection(camera, orbitControl, [fbx]);
-                addObjectToScene(fbx, true);
-                transformControl.attach(fbx);
-            },
-            (err, type) => {
-                handle3dLoadErr(type);
-            }
-        );
-    };
-
     const clearForSnap = hideGround => {
         try {
-            console.log("HHide", hideGround);
             const ground = scene.getObjectByName("ground");
             if (ground && hideGround) ground.visible = false;
             scene.getObjectByName("grid").visible = false;
             transformControl.detach();
             toggleLightHelpers();
         } catch (e) {}
-        // clear grid and floor...
     };
 
     const toggleLightHelpers = (show = false) => {

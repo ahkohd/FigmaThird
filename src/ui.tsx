@@ -5,7 +5,7 @@ import reducer from "./reducer";
 import setupAddons from "./utils/window-addons";
 import "./ui.css";
 
-import Viewport from "./components/ViewPort";
+import Viewport from "./components/Viewport";
 import Shelf from "./components/Shelf";
 
 // Set up window addons
