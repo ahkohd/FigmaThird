@@ -250,7 +250,8 @@ light__textInput--faint {
     overflow: hidden;
 }
 
-.NodeContainer:hover .r {
+.NodeContainer:hover .r,
+.NodeContainer--active:hover .r {
     visibility: visible;
 }
 
