@@ -1,5 +1,5 @@
-// Global App state 
-import { createContext } from 'react';
+// Global App state
+import { createContext } from "react";
 
 const AppContext = createContext({
     loading: false,
@@ -7,7 +7,7 @@ const AppContext = createContext({
     importType: "obj",
     importData: null,
     handleSnap: null,
-    activeTab: 'import',
+    activeTab: "import",
     sceneTree: {
         name: "root",
         toggled: true,
@@ -33,7 +33,6 @@ const AppContext = createContext({
     hideGroundOnSnap: { value: true, _t: new Date().getMilliseconds() },
     snap: null,
     viewPortSelectedItem: null
-
 });
 
 export default AppContext;

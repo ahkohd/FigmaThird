@@ -42,11 +42,13 @@ export function addGround({ track, objectsForSelection, scene }) {
     // ground
     let mesh = track(
         new Mesh(
-            new PlaneBufferGeometry(1000, 1000, 100, 100),
-            new MeshPhongMaterial({
-                color: 0xffffff,
-                depthWrite: false
-            })
+            track(new PlaneBufferGeometry(1000, 1000, 100, 100)),
+            track(
+                new MeshPhongMaterial({
+                    color: 0xffffff,
+                    depthWrite: false
+                })
+            )
         )
     );
     mesh.rotation.x = -Math.PI / 2;

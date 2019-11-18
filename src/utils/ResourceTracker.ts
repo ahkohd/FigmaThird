@@ -83,11 +83,11 @@ export default class ResourceTracker {
 
     disposeById(objectId: number) {
         for (const resource of this.resources) {
-            console.log(123, resource.id);
             if (resource.id == objectId) {
                 this.dispose(resource);
                 break;
             }
         }
+        console.log(this.resources);
     }
 }

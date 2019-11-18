@@ -397,6 +397,7 @@ export default function Viewport(props) {
     };
 
     const snap = hideGround => {
+        dispatch({ type: "RENDERING_MODEL", payload: "Rendering" });
         clearForSnap(hideGround);
         renderer.render(scene, camera);
         renderer.domElement.toBlob(blob => {
@@ -411,6 +412,7 @@ export default function Viewport(props) {
                     "*"
                 );
                 fallbackFromSnap(hideGround);
+                dispatch({ type: "DONE_RENDERING_MODEL" });
             });
         });
     };

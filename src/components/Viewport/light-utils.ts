@@ -29,7 +29,7 @@ import { ILight } from "../../utils/ILight";
 
 export function addHemiLight({ scene, track, dispatch }, colors: Color[], intensity) {
     let light = track(new HemisphereLight(colors[0], colors[1], intensity));
-    let lightHelper = track(new HemisphereLightHelper(light, 5));
+    let lightHelper = new HemisphereLightHelper(light, 5);
     light.position.set(0, 20, 0);
     scene.add(light);
     scene.add(lightHelper);
@@ -66,7 +66,7 @@ export function addDirLight({ scene, track, dispatch }, colors: THREE.Color[], i
     light1.shadow.mapSize.width = 1024 * 5;
     light1.shadow.mapSize.height = 1024 * 5;
 
-    const light1Helper = track(new DirectionalLightHelper(light1, 5));
+    const light1Helper = new DirectionalLightHelper(light1, 5);
     scene.add(light1);
     scene.add(light1Helper);
 
@@ -123,7 +123,7 @@ export function addPointLight(
     light1.position.set(0, 50, 0);
     light1.castShadow = true;
     light1.decay = 1;
-    const light1Helper = track(new PointLightHelper(light1, 5));
+    const light1Helper = new PointLightHelper(light1, 5);
     scene.add(light1);
     scene.add(light1Helper);
 
@@ -160,14 +160,14 @@ export function addSpotLight({ scene, track, dispatch }, colors: THREE.Color[], 
     light1.castShadow = true;
     light1.shadow.mapSize.width = 1024 * 5;
     light1.shadow.mapSize.height = 1024 * 5;
-    const spotLightHelpers = track(new Group());
+    const spotLightHelpers = new Group();
     spotLightHelpers.name = "Spot Light Helpers";
 
-    const light1Helper = track(new SpotLightHelper(light1));
+    const light1Helper = new SpotLightHelper(light1);
     spotLightHelpers.add(light1Helper);
-    const shadowCameraHelper = track(new CameraHelper(light1.shadow.camera));
+    const shadowCameraHelper = new CameraHelper(light1.shadow.camera);
     spotLightHelpers.add(shadowCameraHelper);
-    spotLightHelpers.add(track(new AxesHelper(10)));
+    spotLightHelpers.add(new AxesHelper(10));
     light1.add(spotLightHelpers);
 
     scene.add(light1);
@@ -213,13 +213,11 @@ export function addRectLight(
     rectLight.position.set(0, 20, 0);
     rectLight.lookAt(0, 0, 0);
 
-    let rectLightMesh = track(
-        new Mesh(
-            new PlaneBufferGeometry(),
-            new MeshBasicMaterial({
-                side: BackSide
-            })
-        )
+    let rectLightMesh = new Mesh(
+        new PlaneBufferGeometry(),
+        new MeshBasicMaterial({
+            side: BackSide
+        })
     );
     rectLightMesh.scale.x = rectLight.width;
     rectLightMesh.scale.y = rectLight.height;
@@ -227,8 +225,9 @@ export function addRectLight(
     rectLight.color.setRGB(colors[0].r, colors[0].g, colors[0].b);
     (rectLightMesh.material as any).color.copy(rectLight.color).multiplyScalar(rectLight.intensity);
 
-    let rectLightMeshBack = track(
-        new Mesh(new PlaneBufferGeometry(), new MeshBasicMaterial({ color: 0x080808 }))
+    let rectLightMeshBack = new Mesh(
+        new PlaneBufferGeometry(),
+        new MeshBasicMaterial({ color: 0x080808 })
     );
 
     rectLight.add(rectLightMesh);
