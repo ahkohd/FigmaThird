@@ -38,7 +38,7 @@ export default function SnapPanel() {
                     onClick={event => {
                         dispatch({ type: "SNAP", payload: { _t: new Date().getMilliseconds() } });
                     }}>
-                    Snap
+                    Render
                 </Button>
             </div>
         </div>

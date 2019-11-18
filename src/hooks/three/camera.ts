@@ -13,6 +13,6 @@ export function useCamera([width, height]) {
         0.1, // near clipping plane
         10000 // far clipping plane
     );
-    camera.position.set(10, 20, 30);
+    camera.position.set(10, 20, 150);
     return camera;
 }

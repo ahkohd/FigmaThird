@@ -57,7 +57,7 @@ export function addHemiLight({ scene, track, dispatch }, colors: Color[], intens
 
 export function addDirLight({ scene, track, dispatch }, colors: THREE.Color[], intensity) {
     let light1 = track(new DirectionalLight(colors[0], intensity));
-    light1.position.set(0, 20, 0);
+    light1.position.set(0, 20, -20);
     light1.castShadow = true;
     light1.shadow.camera.top = 1000;
     light1.shadow.camera.bottom = -1000;

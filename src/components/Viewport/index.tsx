@@ -291,8 +291,9 @@ export default function Viewport(props) {
                 if (item.id == id) objectsForSelection.splice(index, 1);
                 index += 1;
             }
-            scene.remove(obj);
-
+            // scene.remove(obj);
+            // dispose object..
+            resourceTracker.disposeById(id);
             // crosscheck list of lights in scene
             let i = 0;
             for (const c of state.lightsInScene) {
@@ -301,7 +302,9 @@ export default function Viewport(props) {
                         type: "REMOVE_LIGHT_FROM_SCENE",
                         payload: i
                     });
-                    scene.remove(scene.getObjectById(c.helperId));
+                    const _objectID = scene.getObjectById(c.helperId);
+                    // scene.remove(_objectID);
+                    resourceTracker.disposeById(_objectID);
                     break;
                 }
                 i += 1;
@@ -327,7 +330,7 @@ export default function Viewport(props) {
             case "glb":
             case "glb_tex":
                 loadGLTF(
-                    { dispatch, addObjectToScene, transformControl },
+                    { track, dispatch, addObjectToScene, transformControl },
                     {
                         glb: data.glb,
                         bin: data.bin,
@@ -338,7 +341,7 @@ export default function Viewport(props) {
             case "obj":
             case "obj_mtl":
                 loadOBJ(
-                    { dispatch, addObjectToScene, transformControl },
+                    { track, dispatch, addObjectToScene, transformControl },
                     {
                         obj: data.obj,
                         mtl: data.mtl,
@@ -348,7 +351,7 @@ export default function Viewport(props) {
                 break;
             case "fbx":
                 loadFBX(
-                    { dispatch, addObjectToScene, transformControl },
+                    { track, dispatch, addObjectToScene, transformControl },
                     {
                         fbx: data.fbx,
                         textures: data.textures

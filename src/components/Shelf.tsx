@@ -71,7 +71,7 @@ export default function Shelf(props) {
                             payload: "snap"
                         })
                     }>
-                    Snap
+                    Render
                 </Label>
             </div>
             {state.activeTab == "import" && <ModelImportPanel></ModelImportPanel>}

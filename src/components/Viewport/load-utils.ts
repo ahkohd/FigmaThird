@@ -21,7 +21,7 @@ const handle3dLoadErr = ({ dispatch }, type) => {
  * @param blobs
  */
 
-export async function loadFBX({ dispatch, addObjectToScene, transformControl }, blobs) {
+export async function loadFBX({ track, dispatch, addObjectToScene, transformControl }, blobs) {
     // import FBX File ...
     importFBX(
         blobs.fbx,
@@ -29,6 +29,7 @@ export async function loadFBX({ dispatch, addObjectToScene, transformControl }, 
         fbx => {
             dispatch({ type: "DONE_LOADING_MODEL" });
             addObjectToScene(fbx, true);
+            track(fbx);
             transformControl.attach(fbx);
         },
         (err, type) => {
@@ -43,7 +44,7 @@ export async function loadFBX({ dispatch, addObjectToScene, transformControl }, 
  * @param blobs
  */
 
-export async function loadOBJ({ dispatch, addObjectToScene, transformControl }, blobs) {
+export async function loadOBJ({ track, dispatch, addObjectToScene, transformControl }, blobs) {
     // import OBJ File ...
     importOBJ(
         blobs.obj,
@@ -52,6 +53,7 @@ export async function loadOBJ({ dispatch, addObjectToScene, transformControl }, 
         model => {
             dispatch({ type: "DONE_LOADING_MODEL" });
             addObjectToScene(model, true);
+            track(model);
             transformControl.attach(model);
         },
         (err, type) => {
@@ -66,7 +68,7 @@ export async function loadOBJ({ dispatch, addObjectToScene, transformControl }, 
  * @param blobs
  */
 
-export async function loadGLTF({ dispatch, addObjectToScene, transformControl }, blobs) {
+export async function loadGLTF({ track, dispatch, addObjectToScene, transformControl }, blobs) {
     // import GLTF File ...
     importGLB(
         blobs.glb,
@@ -74,6 +76,7 @@ export async function loadGLTF({ dispatch, addObjectToScene, transformControl },
         blobs.textures,
         glb => {
             dispatch({ type: "DONE_LOADING_MODEL" });
+            track(glb.scene);
             addObjectToScene(glb.scene, true);
             transformControl.attach(glb.scene);
         },
