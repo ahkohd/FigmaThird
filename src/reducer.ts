@@ -25,6 +25,18 @@ export default function reducer(state, { type, payload = null }) {
                 loading: false,
                 loadingText: ""
             };
+        case "SHOW_FOOTPANEL":
+            return {
+                ...state,
+                loading: false,
+                showFootPanel: true
+            };
+        case "HIDE_FOOTPANEL":
+            return {
+                ...state,
+                loading: false,
+                showFootPanel: false
+            };
         case "SET_IMPORT_TYPE":
             return {
                 ...state,

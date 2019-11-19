@@ -7,6 +7,7 @@ import "./ui.css";
 
 import Viewport from "./components/Viewport";
 import Shelf from "./components/Shelf";
+import { FootPanel } from "./components/FootPanel";
 
 // Set up window addons
 setupAddons();
@@ -20,6 +21,7 @@ const App = () => {
             <div className="app">
                 <Viewport height={450} width={550}></Viewport>
                 <Shelf width={250}></Shelf>
+                <FootPanel />
             </div>
         </AppContext.Provider>
     );

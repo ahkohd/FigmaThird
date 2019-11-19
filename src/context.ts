@@ -32,7 +32,8 @@ const AppContext = createContext({
     },
     hideGroundOnSnap: { value: true, _t: new Date().getMilliseconds() },
     snap: null,
-    viewPortSelectedItem: null
+    viewPortSelectedItem: null,
+    showFootPanel: false
 });
 
 export default AppContext;

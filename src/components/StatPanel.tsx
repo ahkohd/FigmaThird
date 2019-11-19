@@ -7,7 +7,7 @@ const ItemDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transform: translate(65px);
+    transform: translate(35px);
 `;
 
 export default function StatPanel(props) {
@@ -50,6 +50,15 @@ export default function StatPanel(props) {
                         dispatch({
                             type: "SET_TRANSFORM_OBJECT_AS_PIVOT",
                             payload: { timestamp: new Date().getMilliseconds() }
+                        });
+                    }}></IconButton>
+
+                <IconButton
+                    icon={<Icon name="Library" />}
+                    className="footstat__btn"
+                    onClick={event => {
+                        dispatch({
+                            type: "SHOW_FOOTPANEL"
                         });
                     }}></IconButton>
 
