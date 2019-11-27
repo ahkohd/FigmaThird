@@ -8,18 +8,38 @@ export const H2 = styled.h2`
 export const KBD = styled.kbd`
     background: #00aced;
     border-radius: 2px;
-    padding: 3px 5px;
     color: black;
     font: caption;
     cursor: default;
+    width: 26px;
+    height: 25px;
+    display: flex;
+
+    & span {
+        margin: auto;
+    }
 `;
 
 export const FlexSpaceCenter = styled.div`
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    margin-right: 10px;
+    min-width: ${({ minWidth }) => minWidth || "170px"};
+    margin: 10px;
+`;
+
+export const FlexContainer = styled.div`
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    height: 80px;
 `;
 
 export const KText = styled.div`
     color: #aaa;
+    font: caption;
+    font-size: 12px;
+    margin-left: 10px;
+    cursor: default;
 `;
