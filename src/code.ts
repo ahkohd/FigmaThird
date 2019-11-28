@@ -1,6 +1,6 @@
 import { applySnapshotToSelectedFigmaObject } from "./utils/utils";
 
-// This shows the HTML page in "ui.html".
+// This shows the HTML page in "ui.html"
 figma.showUI(__html__, {
   width: 800,
   height: 450

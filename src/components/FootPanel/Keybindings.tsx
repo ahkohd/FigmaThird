@@ -4,7 +4,7 @@ import { H2, KBD, FlexSpaceCenter, KText, FlexContainer } from "./Styled";
 export default function Keybindings() {
     return (
         <>
-            <H2>Transform keyboard Shortcuts</H2>
+            <H2>Transform Keyboard Shortcuts</H2>
             <FlexContainer>
                 <FlexSpaceCenter>
                     <KBD>

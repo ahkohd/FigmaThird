@@ -30,9 +30,11 @@ export const FlexSpaceCenter = styled.div`
 `;
 
 export const FlexContainer = styled.div`
-    align-items: center;
+    display: inline-flex;
+    align-items: flex-start;
     justify-content: flex-start;
     overflow-y: scroll;
+    flex-wrap: wrap;
     height: 80px;
 `;
 
@@ -42,4 +44,15 @@ export const KText = styled.div`
     font-size: 12px;
     margin-left: 10px;
     cursor: default;
+`;
+
+export const ToolIcon = styled.div`
+    width: 32px;
+    height: 32px;
+    display: flex;
+    overflow: hidden;
+
+    & * {
+        margin: auto;
+    }
 `;
