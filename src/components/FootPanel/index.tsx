@@ -7,6 +7,7 @@ import Keybindings from "./Keybindings";
 import Tools from "./Tools";
 import Help from "./Help";
 import About from "./About";
+import Lights from "./Lights";
 
 const FootPanelContainer = styled.div`
     width: 100%;
@@ -51,13 +52,14 @@ export function FootPanel() {
                     </FootPanelCloseButtonContainer>
                     <Navbar
                         activeTab={tab}
-                        navItems={["Keybindings", "Tools", "Help", "About"]}
+                        navItems={["Keybindings", "Tools", "Lights", "Help", "About"]}
                         onChange={activeTab => setTab(activeTab)}
                     />
                     <FootPanelTabContent>
                         {tab == "Keybindings" && <Keybindings />}
                         {tab == "Tools" && <Tools />}
                         {tab == "Help" && <Help />}
+                        {tab == "Lights" && <Lights />}
                         {tab == "About" && <About />}
                     </FootPanelTabContent>
                 </FootPanelContainer>

@@ -6,7 +6,8 @@ import {
     MeshPhongMaterial,
     GridHelper,
     TextureLoader,
-    sRGBEncoding
+    sRGBEncoding,
+    ShadowMaterial
 } from "three";
 import imageTextureBase64 from "../../image";
 
@@ -40,17 +41,29 @@ export default function createMeshes({ track, addObjectToScene, transformControl
  */
 export function addGround({ track, objectsForSelection, scene }) {
     // ground
+    // let mesh = track(
+    //     new Mesh(
+    //         track(new PlaneBufferGeometry(1000, 1000, 100, 100)),
+    //         track(
+    //             new MeshPhongMaterial({
+    //                 color: 0xffffff,
+    //                 depthWrite: false
+    //             })
+    //         )
+    //     )
+    // );
+
+    const planeMaterial = track(new ShadowMaterial());
+    planeMaterial.opacity = 0.2;
+
+
     let mesh = track(
         new Mesh(
             track(new PlaneBufferGeometry(1000, 1000, 100, 100)),
-            track(
-                new MeshPhongMaterial({
-                    color: 0xffffff,
-                    depthWrite: false
-                })
-            )
+            planeMaterial
         )
     );
+
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
     mesh.name = "ground";

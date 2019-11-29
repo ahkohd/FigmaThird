@@ -16,7 +16,7 @@ export default function SnapPanel() {
         <div className="panel">
             <div className="ui-section pad">
                 <GroundDiv>
-                    <Text>Hide ground on snap</Text>
+                    <Text>Don't render ground shadow</Text>
                     <Checkbox
                         checked={state.hideGroundOnSnap.value}
                         onChange={event => {
