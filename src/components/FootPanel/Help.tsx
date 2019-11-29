@@ -36,6 +36,15 @@ export default function Help() {
                         select it. Focus on Third and navigate to the Render tab. Hit the Render
                         button to render your view into the selected object in Figma.
                     </Text>
+
+                    <SectionTitle>Recommended workflow</SectionTitle>
+                    <Text>
+                        Where possible, using glTF (GL Transmission Format) is recommended. Both
+                        .GLB and .GLTF versions of the format are well supported. Because glTF is
+                        focused on runtime asset delivery, it is compact to transmit and fast to
+                        load. Features include meshes, materials, textures, skins, skeletons, morph
+                        targets, animations, lights, and cameras.
+                    </Text>
                 </div>
             </FlexContainer>
         </>

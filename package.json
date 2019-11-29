@@ -1,32 +1,33 @@
 {
-  "name": "third",
-  "version": "1.0.0",
-  "description": "This plugin template uses Typescript. If you are familiar with Javascript, Typescript will look very familiar. In fact, valid Javascript code is already valid Typescript code.",
-  "main": "code.js",
-  "dependencies": {
-    "css-loader": "^3.2.0",
-    "figma-styled-components": "^1.2.2",
-    "html-webpack-inline-source-plugin": "^0.0.10",
-    "html-webpack-plugin": "^3.2.0",
-    "react": "^0.0.0-f6b8d31a7",
-    "react-dom": "^0.0.0-f6b8d31a7",
-    "react-treebeard": "^3.2.4",
-    "style-loader": "^1.0.0",
-    "styled-components": "^4.4.1",
-    "three": "^0.110.0",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.6.4",
-    "url-loader": "^2.2.0",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
-  },
-  "devDependencies": {
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.9.3"
-  },
-  "scripts": {
-    "start": "npx webpack --mode=development --watch"
-  },
-  "author": "",
-  "license": "ISC"
+    "name": "third",
+    "version": "1.0.0",
+    "description": "This plugin template uses Typescript. If you are familiar with Javascript, Typescript will look very familiar. In fact, valid Javascript code is already valid Typescript code.",
+    "main": "code.js",
+    "dependencies": {
+        "css-loader": "^3.2.0",
+        "figma-styled-components": "^1.2.2",
+        "html-webpack-inline-source-plugin": "^0.0.10",
+        "html-webpack-plugin": "^3.2.0",
+        "react": "^0.0.0-f6b8d31a7",
+        "react-dom": "^0.0.0-f6b8d31a7",
+        "react-treebeard": "^3.2.4",
+        "style-loader": "^1.0.0",
+        "styled-components": "^4.4.1",
+        "three": "^0.110.0",
+        "ts-loader": "^6.2.1",
+        "typescript": "^3.6.4",
+        "url-loader": "^2.2.0",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10"
+    },
+    "devDependencies": {
+        "@types/react": "^16.9.11",
+        "@types/react-dom": "^16.9.3"
+    },
+    "scripts": {
+        "start": "npx webpack --mode=development --watch",
+        "build": "npx webpack --mode=production"
+    },
+    "author": "",
+    "license": "ISC"
 }
