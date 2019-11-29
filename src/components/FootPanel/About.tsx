@@ -24,9 +24,9 @@ export default function About() {
                         MIT
                         <Link
                             onClick={() =>
-                                window.open("https://github.com/ahkohd/FigmaThird/License.md")
+                                window.open("https://github.com/ahkohd/FigmaThird/LICENSE.md")
                             }>
-                            (https://github.com/ahkohd/FigmaThird/License.md)
+                            (https://github.com/ahkohd/FigmaThird/LICENSE.md)
                         </Link>
                     </Text>
                 </div>
