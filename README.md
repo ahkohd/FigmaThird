@@ -2,11 +2,11 @@
 
 [![Actions Status](https://github.com/ahkohd/FigmaDither/workflows/ProdBuild/badge.svg)](https://github.com/ahkohd/FigmaDither/workflows/ProdBuild/badge.svg)
 
-A Figma plugin that helps you to import, lit and use and render 3D models right there in Figma 🙈
+A Figma plugin that lets you import, lit, use and render 3D models right there in Figma 🙈
 
 # 💡 Features
 
--   ⚡ A viewport to intreact with 3D models.
+-   ⚡ A viewport to interact with 3D models.
 -   🔥 High resolution and transparent rendering.
 -   😽 Easy to use UI.
 -   ✨ Supports multiple 3D Object model format for import.
@@ -17,10 +17,9 @@ A Figma plugin that helps you to import, lit and use and render 3D models right 
 ![Third in Action](./demo-naruto.gif)
 
 # 📸 Screenshots
+Figma Third in action 🔥
 
-The shot taken below is a fresh dithered image in a Figma scene. 🔥
-
-![Dithered Image 🔥](./dither-shot.png)
+![Figma Third 🔥](./shot1.png)
 
 # ☕️ Donate
 
