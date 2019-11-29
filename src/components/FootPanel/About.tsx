@@ -8,9 +8,9 @@ export default function About() {
             <FlexContainer>
                 <div style={{ width: "80vw" }}>
                     <SectionTitle>Third</SectionTitle>
-                    <Text>Import, lit and use 3D models right there in Figma.</Text>
+                    <Text>Import, lit and use 3D models right there in Figma 🙈</Text>
 
-                    <SectionTitle>Notes</SectionTitle>
+                    <SectionTitle>Note</SectionTitle>
                     <Text>
                         Made with ❤️ and Three.JS <br />
                         Feel free to contribute 👨‍❤️‍💋‍👨.
