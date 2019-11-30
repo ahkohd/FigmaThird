@@ -60,6 +60,18 @@ export default function Keybindings() {
                     </KBD>
                     <KText>Toggle Gizmo Visibility</KText>
                 </FlexSpaceCenter>
+                <FlexSpaceCenter>
+                    <KBD>
+                        <span>⌘</span>
+                    </KBD>
+                    <KText>Pan Around Pivot</KText>
+                </FlexSpaceCenter>
+                <FlexSpaceCenter>
+                    <KBD>
+                        <span>⌥</span>
+                    </KBD>
+                    <KText>Rotate Around Pivot</KText>
+                </FlexSpaceCenter>
             </FlexContainer>
         </>
     );

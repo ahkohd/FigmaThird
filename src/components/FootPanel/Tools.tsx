@@ -29,7 +29,7 @@ export default function Tools() {
                     <ToolIcon>
                         <Icon name="VectorHandles" />
                     </ToolIcon>
-                    <KText>Pivot Tool</KText>
+                    <KText>Set Pivot Tool</KText>
                 </FlexSpaceCenter>
                 <FlexSpaceCenter>
                     <ToolIcon>
