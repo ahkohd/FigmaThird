@@ -53,7 +53,7 @@ export default class ResourceTracker {
      * @param resource
      */
 
-    dispose(resource) {
+    dispose(resource, scene?) {
         if (this.resources.has(resource)) {
             this.untrack(resource);
             if (resource.material) {
@@ -73,6 +73,12 @@ export default class ResourceTracker {
                 console.log("@{Resource Tracker}: Disposed", resource.name);
                 resource.dispose();
             }
+        }
+
+        try {
+            if (scene) scene.remove(resource);
+        } catch (e) {
+            console.log(e);
         }
     }
 

@@ -291,7 +291,6 @@ export default function Viewport(props) {
                 if (item.id == id) objectsForSelection.splice(index, 1);
                 index += 1;
             }
-            // scene.remove(obj);
             // dispose object..
             resourceTracker.disposeById(id);
             // crosscheck list of lights in scene
@@ -302,9 +301,10 @@ export default function Viewport(props) {
                         type: "REMOVE_LIGHT_FROM_SCENE",
                         payload: i
                     });
-                    const _objectID = scene.getObjectById(c.helperId);
+                    const _object = scene.getObjectById(c.helperId);
                     // scene.remove(_objectID);
-                    resourceTracker.disposeById(_objectID);
+                    console.log("Light helper to delete", _object.name, _object.id);
+                    resourceTracker.dispose(_object, scene);
                     break;
                 }
                 i += 1;
