@@ -14,8 +14,10 @@ A Figma plugin that lets you import, lit, use and render 3D models right there i
 
 # 🎥 Demo
 
-A demo showing the use of Third to render a All Star Converse kicks into a project Figma.
-![Third in Action](./demo.gif)
+![Third in Action](./third-trailer.gif)
+
+Also see demo showing the use of Third to render a
+[All Star Converse kicks into a project Figma.](./demo.gif)
 
 All Star Converse Kicks 3D model by
 [Pedro França](https://sketchfab.com/3d-models/all-star-converse-f3428b2583a0415c99b3b08feee48d79)
