@@ -26,7 +26,7 @@
     },
     "scripts": {
         "start": "npx webpack --mode=development --watch",
-        "build": "npx webpack --mode=production"
+        "build": "npx webpack"
     },
     "author": "",
     "license": "ISC"
