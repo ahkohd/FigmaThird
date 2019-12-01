@@ -9,8 +9,8 @@ A Figma plugin that lets you import, lit, use and render 3D models right there i
 -   ⚡ A viewport to interact with 3D models.
 -   🔥 High resolution and transparent rendering.
 -   😽 Easy to use UI.
--   ✨ Supports multiple 3D Object model format for import.
--   🚀 Lightweight, powered with Three.JS
+-   ✨ Supports multiple 3D model extensions for import. `.OBJ, .FBX, .GLB/GLTF`
+-   🚀 Lightweight, powered with `Three.JS`
 
 # 🎥 Demo
 
