@@ -26,7 +26,7 @@ All Star Converse Kicks 3D model by
 
 Figma Third in action 🔥
 
-![Figma Third 🔥](./shot1.png)
+![Figma Third 🔥](./media/shot1.png)
 
 # ☕️ Donate
 
