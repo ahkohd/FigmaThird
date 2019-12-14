@@ -68,7 +68,7 @@ export function addGrid({ track, scene }) {
     (grid.material as any).opacity = 0.2;
     (grid.material as any).transparent = true;
     grid.name = "grid";
-    grid.position.y = -9.9;
+    grid.position.y = -9.7;
     scene.add(grid);
     return grid;
 }
