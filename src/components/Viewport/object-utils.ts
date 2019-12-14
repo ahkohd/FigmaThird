@@ -40,19 +40,6 @@ export default function createMeshes({ track, addObjectToScene, transformControl
  * @param param0
  */
 export function addGround({ track, objectsForSelection, scene }) {
-    // ground
-    // let mesh = track(
-    //     new Mesh(
-    //         track(new PlaneBufferGeometry(1000, 1000, 100, 100)),
-    //         track(
-    //             new MeshPhongMaterial({
-    //                 color: 0xffffff,
-    //                 depthWrite: false
-    //             })
-    //         )
-    //     )
-    // );
-
     const planeMaterial = track(new ShadowMaterial());
     planeMaterial.opacity = 0.2;
 
@@ -81,7 +68,7 @@ export function addGrid({ track, scene }) {
     (grid.material as any).opacity = 0.2;
     (grid.material as any).transparent = true;
     grid.name = "grid";
-    grid.position.y = -10;
+    grid.position.y = -9.9;
     scene.add(grid);
     return grid;
 }
