@@ -18,7 +18,7 @@
         "typescript": "^3.6.4",
         "url-loader": "^2.2.0",
         "webpack": "^4.41.2",
-        "webpack-cli": "^3.3.10"
+        "webpack-cli": "^4.0.0"
     },
     "devDependencies": {
         "@types/react": "^16.9.11",
