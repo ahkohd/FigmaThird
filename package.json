@@ -11,7 +11,7 @@
         "react": "^0.14.0",
         "react-dom": "^0.14.0",
         "react-treebeard": "^3.2.4",
-        "style-loader": "^1.0.0",
+        "style-loader": "^3.0.0",
         "styled-components": "^6.0.0",
         "three": "^0.160.0",
         "ts-loader": "^9.0.0",
