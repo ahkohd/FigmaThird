@@ -16,7 +16,7 @@
         "three": "^0.160.0",
         "ts-loader": "^9.0.0",
         "typescript": "^5.0.0",
-        "url-loader": "^2.2.0",
+        "url-loader": "^4.0.0",
         "webpack": "^4.41.2",
         "webpack-cli": "^5.0.0"
     },
