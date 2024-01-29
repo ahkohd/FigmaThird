@@ -2,11 +2,10 @@ import {
     MeshStandardMaterial,
     BoxGeometry,
     Mesh,
-    PlaneBufferGeometry,
-    MeshPhongMaterial,
+    PlaneGeometry,
     GridHelper,
     TextureLoader,
-    sRGBEncoding,
+    SRGBColorSpace,
     ShadowMaterial
 } from "three";
 import imageTextureBase64 from "../../image";
@@ -19,7 +18,7 @@ export default function createMeshes({ track, addObjectToScene, transformControl
     // Create cube and add to scene.
     // Create texture for material
     var texture = new TextureLoader().load(imageTextureBase64);
-    texture.encoding = sRGBEncoding;
+    texture.colorSpace = SRGBColorSpace;
     let material = track(
         new MeshStandardMaterial({
             map: texture
@@ -43,13 +42,7 @@ export function addGround({ track, objectsForSelection, scene }) {
     const planeMaterial = track(new ShadowMaterial());
     planeMaterial.opacity = 0.2;
 
-
-    let mesh = track(
-        new Mesh(
-            track(new PlaneBufferGeometry(1000, 1000, 100, 100)),
-            planeMaterial
-        )
-    );
+    let mesh = track(new Mesh(track(new PlaneGeometry(1000, 1000, 100, 100)), planeMaterial));
 
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;

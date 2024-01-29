@@ -14,7 +14,7 @@ import {
     AxesHelper,
     RectAreaLight,
     Mesh,
-    PlaneBufferGeometry,
+    PlaneGeometry,
     MeshBasicMaterial,
     BackSide
 } from "three";
@@ -27,7 +27,7 @@ import { ILight } from "../../utils/ILight";
  * @param intensity
  */
 
-export function addHemiLight({ scene, track, dispatch }, colors: Color[], intensity) {
+export function addHemiLight({ scene, track, dispatch }, colors: Color[], intensity: number) {
     let light = track(new HemisphereLight(colors[0], colors[1], intensity));
     let lightHelper = new HemisphereLightHelper(light, 5);
     light.position.set(0, 20, 0);
@@ -55,7 +55,7 @@ export function addHemiLight({ scene, track, dispatch }, colors: Color[], intens
  * @param intensity
  */
 
-export function addDirLight({ scene, track, dispatch }, colors: THREE.Color[], intensity) {
+export function addDirLight({ scene, track, dispatch }, colors: THREE.Color[], intensity: number) {
     let light1 = track(new DirectionalLight(colors[0], intensity));
     light1.position.set(0, 20, -20);
     light1.castShadow = true;
@@ -91,7 +91,7 @@ export function addDirLight({ scene, track, dispatch }, colors: THREE.Color[], i
  * @param intensity
  */
 
-export function addAmbLight({ scene, track, dispatch }, colors: THREE.Color[], intensity) {
+export function addAmbLight({ scene, track, dispatch }, colors: THREE.Color[], intensity: number) {
     let light1 = track(new AmbientLight(colors[0], intensity));
     light1.position.set(0, 0, 0);
     scene.add(light1);
@@ -116,8 +116,8 @@ export function addAmbLight({ scene, track, dispatch }, colors: THREE.Color[], i
 export function addPointLight(
     { scene, track, dispatch },
     colors: THREE.Color[],
-    intensity,
-    distance
+    intensity: number,
+    distance: number
 ) {
     let light1 = track(new PointLight(colors[0], intensity, distance));
     light1.position.set(0, 50, 0);
@@ -150,7 +150,7 @@ export function addPointLight(
  * @param intensity
  */
 
-export function addSpotLight({ scene, track, dispatch }, colors: THREE.Color[], intensity) {
+export function addSpotLight({ scene, track, dispatch }, colors: THREE.Color[], intensity: number) {
     let light1 = track(new SpotLight(colors[0], intensity));
     light1.position.set(0, 80, 0);
     light1.angle = Math.PI / 3;
@@ -214,7 +214,7 @@ export function addRectLight(
     rectLight.lookAt(0, 0, 0);
 
     let rectLightMesh = new Mesh(
-        new PlaneBufferGeometry(),
+        new PlaneGeometry(),
         new MeshBasicMaterial({
             side: BackSide
         })
@@ -226,7 +226,7 @@ export function addRectLight(
     (rectLightMesh.material as any).color.copy(rectLight.color).multiplyScalar(rectLight.intensity);
 
     let rectLightMeshBack = new Mesh(
-        new PlaneBufferGeometry(),
+        new PlaneGeometry(),
         new MeshBasicMaterial({ color: 0x080808 })
     );
 
