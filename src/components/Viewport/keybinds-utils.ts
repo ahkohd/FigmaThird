@@ -1,6 +1,6 @@
-import * as THREE from "three";
+import { MathUtils } from "three";
 
-export function handleUserKeyDownInput({ transformControl }, event) {
+export function handleUserKeyDownInput({ transformControl }, event: KeyboardEvent) {
     switch (event.keyCode) {
         case 81: // Q
             transformControl.setSpace(transformControl.space === "local" ? "world" : "local");
@@ -8,7 +8,7 @@ export function handleUserKeyDownInput({ transformControl }, event) {
 
         case 17: // Ctrl
             transformControl.setTranslationSnap(100);
-            transformControl.setRotationSnap(THREE.Math.degToRad(15));
+            transformControl.setRotationSnap(MathUtils.degToRad(15));
             break;
 
         case 87: // W
@@ -51,7 +51,7 @@ export function handleUserKeyDownInput({ transformControl }, event) {
     }
 }
 
-export function handleUserKeyUpInput({ transformControl }, event) {
+export function handleUserKeyUpInput({ transformControl }, event: KeyboardEvent) {
     switch (event.keyCode) {
         case 17: // Ctrl
             transformControl.setTranslationSnap(null);
@@ -60,7 +60,10 @@ export function handleUserKeyUpInput({ transformControl }, event) {
     }
 }
 
-export function onMouseDown({ getMousePosition, port, onDownPosition, onMouseUp }, event) {
+export function onMouseDown(
+    { getMousePosition, port, onDownPosition, onMouseUp },
+    event: MouseEvent
+) {
     event.preventDefault();
     const array = getMousePosition(port, event.clientX, event.clientY);
     onDownPosition.fromArray(array);
@@ -77,7 +80,7 @@ export function onDoubleClick(
         getIntersects,
         setObjectAsPivotPoint
     },
-    event
+    event: MouseEvent
 ) {
     const array = getMousePosition(port, event.clientX, event.clientY);
     onDoubleClickPosition.fromArray(array);
@@ -106,16 +109,16 @@ export function setupKeyAndMouseEventListeners({
     getIntersects,
     setObjectAsPivotPoint
 }) {
-    window.addEventListener("keydown", event =>
+    window.addEventListener("keydown", (event) =>
         handleUserKeyDownInput({ transformControl }, event)
     );
 
-    window.addEventListener("keyup", event => handleUserKeyUpInput({ transformControl }, event));
+    window.addEventListener("keyup", (event) => handleUserKeyUpInput({ transformControl }, event));
 
     // object selection listners
     port.addEventListener(
         "mousedown",
-        event => {
+        (event: MouseEvent) => {
             onMouseDown({ getMousePosition, port, onDownPosition, onMouseUp }, event);
         },
         false
@@ -123,7 +126,7 @@ export function setupKeyAndMouseEventListeners({
 
     port.addEventListener(
         "dblclick",
-        event =>
+        (event: MouseEvent) =>
             onDoubleClick(
                 {
                     getMousePosition,
@@ -151,13 +154,16 @@ export function cleanupKeyAndMouseEventListeners({
     onMouseDown,
     onMouseUp
 }) {
-    window.removeEventListener("keydown", event =>
+    window.removeEventListener("keydown", (event) =>
         handleUserKeyDownInput({ transformControl }, event)
     );
-    window.removeEventListener("keyup", event => handleUserKeyUpInput({ transformControl }, event));
+    window.removeEventListener("keyup", (event) =>
+        handleUserKeyUpInput({ transformControl }, event)
+    );
     port.removeEventListener(
         "mousedown",
-        event => onMouseDown({ getMousePosition, port, onDownPosition, onMouseUp }, event),
+        (event: MouseEvent) =>
+            onMouseDown({ getMousePosition, port, onDownPosition, onMouseUp }, event),
         false
     );
 }
