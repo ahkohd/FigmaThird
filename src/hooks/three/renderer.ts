@@ -13,10 +13,8 @@ export function useRenderer(container: HTMLDivElement, [width, height]: number[]
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.gammaFactor = 2.2;
-    renderer.gammaOutput = true;
-    renderer.physicallyCorrectLights = true;
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
     return renderer;
 }
+
