@@ -5,7 +5,7 @@
   "main": "code.js",
   "dependencies": {
     "@types/three": "^0.162.0",
-    "css-loader": "^6.0.0",
+    "css-loader": "^7.0.0",
     "figma-styled-components": "2.1.0",
     "html-webpack-plugin": "^5.0.0",
     "react": "16.14.0",
